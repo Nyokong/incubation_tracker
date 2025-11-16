@@ -2,7 +2,12 @@ import NextAuth from "next-auth";
 import { drizzleAdapter } from "./lib/drizzleAdapter";
 import authConfig from "@/lib/authConfig";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const {
+  handlers: { GET, POST },
+  auth,
+  signIn,
+  signOut,
+} = NextAuth({
   debug: true,
   adapter: drizzleAdapter,
   ...authConfig,

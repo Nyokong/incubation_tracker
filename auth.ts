@@ -1,6 +1,9 @@
+import Credentials from "next-auth/providers/credentials";
+import { encode as defaultEncode } from "next-auth/jwt";
 import NextAuth from "next-auth";
 import { drizzleAdapter } from "./lib/drizzleAdapter";
 import authConfig from "@/lib/authConfig";
+import { v4 as uuidv4 } from "uuid";
 
 export const {
   handlers: { GET, POST },
@@ -8,11 +11,15 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
-  debug: true,
+  debug: process.env.NODE_ENV != "production" && true,
   adapter: drizzleAdapter,
   ...authConfig,
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
+      if (account?.provider == "credentials") {
+        token.Credentials = true;
+      }
+
       if (user) {
         token.id = user.id;
         token.role = `${user.role}`;
@@ -30,6 +37,7 @@ export const {
     async signIn() {
       const isAllowedToSignIn = true;
       if (isAllowedToSignIn) {
+        // console.log(token, "loggin in user");
         return true;
       } else {
         // Return false to display a default error message
@@ -48,6 +56,32 @@ export const {
   },
   session: {
     strategy: "database",
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+  },
+  jwt: {
+    encode: async function (params) {
+      if (params.token?.Credentials) {
+        const sessionToken = uuidv4();
+
+        if (!params.token.sub) {
+          throw new Error("No User Id found");
+        }
+
+        const createdSession = await drizzleAdapter?.createSession?.({
+          sessionToken: sessionToken,
+          userId: params.token.id,
+          expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        });
+
+        if (!createdSession) {
+          throw new Error("Failed to create a session");
+        }
+
+        return sessionToken;
+      }
+
+      return defaultEncode(params);
+    },
   },
   cookies: {
     sessionToken: {

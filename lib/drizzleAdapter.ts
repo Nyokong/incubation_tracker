@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import * as schema from "@/db/schema";
-import { AdapterUser } from "next-auth/adapters";
+import { AdapterSession, AdapterUser } from "next-auth/adapters";
 import { randomUUID } from "crypto";
 
 import { eq } from "drizzle-orm";
@@ -38,6 +38,49 @@ export const drizzleAdapter = {
         `${createdUser.firstname} ${createdUser.lastname}`.trim() || null,
     };
   },
+  // async createSession(session: AdapterSession) {
+  //   const result = await db.insert(schema.sessions).values(session).returning();
+  //   // Drizzle returns RowList, so map it:
+  //   const row = result[0];
+  //   return {
+  //     sessionToken: row.sessionToken,
+  //     userId: row.userId,
+  //     expires: row.expires,
+  //   } satisfies AdapterSession;
+  // },
+
+  async createSession(session: AdapterSession): Promise<AdapterSession> {
+    const result = await db.insert(schema.sessions).values(session).returning();
+    // Drizzle returns RowList, so map it:
+
+    console.log("please fucking work");
+    const row = result[0];
+    return {
+      sessionToken: row.sessionToken,
+      userId: row.userId,
+      expires: row.expires,
+    } as AdapterSession;
+  },
+
+  // async updateSession(session: AdapterSession) {
+  //   const updated = await db
+  //     .update(schema.sessions)
+  //     .set({
+  //       sessionToken: session.sessionToken,
+  //       userId: session.userId,
+  //       expires: session.expires,
+  //     })
+  //     .where(eq(schema.sessions.sessionToken, session.sessionToken));
+
+  //   return updated;
+  // },
+
+  // async deleteSession(sessionToken: string) {
+  //   console.log("deleting cookie");
+  //   await db
+  //     .delete(schema.sessions)
+  //     .where(eq(schema.sessions.sessionToken, sessionToken));
+  // },
 
   async getUser(id: string): Promise<AdapterUser | null> {
     const result = await db
@@ -58,6 +101,7 @@ export const drizzleAdapter = {
       role: user.role, // custom field
     };
   },
+
   async getSessionAndUser(sessionToken: string) {
     const sessionResult = await db
       .select()
@@ -65,7 +109,10 @@ export const drizzleAdapter = {
       .where(eq(schema.sessions.sessionToken, sessionToken))
       .limit(1);
 
+    // console.log(`${sessionToken} - token`);
+
     const session = sessionResult[0];
+
     if (!session) return null;
 
     const userResult = await db

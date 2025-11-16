@@ -1,3 +1,4 @@
+import { sessions } from "./../db/schema";
 // auth config
 import Google from "next-auth/providers/google";
 import type { NextAuthConfig } from "next-auth";
@@ -31,38 +32,55 @@ export default {
           .limit(1)
           .then((res) => res[0]);
 
-        if (user) {
-          const check = await db
-            .select()
-            .from(accounts)
-            .where(eq(accounts.userId, user.id))
-            .limit(1);
+        if (!user) return null;
 
-          if (check.length > 0) {
-            // console.log("found something");
-            await db
-              .update(accounts)
-              .set({ session_state: "loggedin" })
-              .where(eq(accounts.userId, user.id));
-          } else {
-            // await db
-            //   .insert(accounts)
-            //   .values({ userId: `${user.id}`, session_state: true });
-            // console.log("didnt find something");
-          }
+        const check = await db
+          .select()
+          .from(accounts)
+          .where(eq(accounts.userId, user.id))
+          .limit(1);
 
-          console.log("loggin in from the auth");
+        const expDate = Date.now() + 30 * 24 * 60 * 60 * 1000;
 
-          return {
-            id: user.id,
-            firstname: user.firstname,
-            lastname: user.lastname,
-            email: user.email,
-            role: user.role,
-          };
+        if (check.length > 0) {
+          // console.log("found something");
+          await db
+            .update(accounts)
+            .set({
+              session_state: "updatedcredentials",
+            })
+            .where(eq(accounts.userId, user.id));
+
+          // await db.update(sessions).set({
+          //   sessionToken: "",
+          //   userId: user.id,
+          //   expires: new Date(expDate),
+          // });
         } else {
-          return null;
+          await db.insert(accounts).values({
+            userId: user.id,
+            type: `email`,
+            provider: `credentials`,
+            providerAccountId: user.id,
+            session_state: "newcredentials",
+            // expires_at: Date.now() + 30 * 24 * 60 * 60 * 1000,
+          });
+
+          // await db.insert(sessions).values({
+          //   sessionToken: "",
+          //   userId: user.id,
+          //   expires: new Date(Date.now() + 30 * 24 * 60 * 60),
+          // });
         }
+
+        // console.log("iam loggin in");
+
+        return {
+          id: user.id,
+          name: user.firstname,
+          email: user.email,
+          role: user.role,
+        };
       },
     }),
   ],

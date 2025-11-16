@@ -29,9 +29,11 @@ export default function Staffdashboard() {
   }
 
   return (
-    <div className="px-5">
-      <div className="w-full flex-row items-center pl-10">
-        hey {session?.user?.email}
+    <div className="px-5 mt-4">
+      <div className="w-full flex-row items-center ">
+        <div className="h-[100px] w-full bg-havelock-blue-50 p-5 rounded-md">
+          <h1 className="text-2xl font-medium">hey {session?.user?.name}</h1>
+        </div>
       </div>
 
       <div className="bg-havelock-blue-600 dark:bg-havelock-600 p-2 rounded-[5px] border-t-7 border-t-havelock-blue-700 mt-5">
@@ -39,14 +41,17 @@ export default function Staffdashboard() {
           href={"/staff/dashboard/createform"}
           className="underline underline-offset-4 h-25 flex justify-center items-center"
         >
-          <p>create a form</p>
+          <p className="text-white">create a form</p>
         </Link>
       </div>
 
-      <div className="bg-[#f7f7f7] dark:bg-[#1d1d1d] p-2 rounded-[5px] border-t-7 border-t-[#1a73e8] mt-5">
+      <div className="bg-[#f7f7f7] dark:bg-[#1d1d1d] rounded-[5px] border-t-7 border-t-[#ececec] mt-5 grid grid-cols-2">
         {forms.map((entry, idx) => {
           return (
-            <div key={idx} className="min-h-20 flex flex-col gap-2">
+            <div
+              key={idx}
+              className="min-h-20 flex flex-col gap-2 w-[90%] col-span-1 p-4"
+            >
               <h1 className="text-2xl font-medium">{entry.title}</h1>
               <p>{entry.description}</p>
               <button className="w-30 h-10 flex justify-center items-center bg-[#376fb8] text-white rounded-md mt-2">

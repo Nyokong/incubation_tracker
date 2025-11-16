@@ -21,11 +21,16 @@ import { LucideLightbulb } from "lucide-react";
 import { useGlobalNotify } from "@/context/globalnotifcations";
 
 import { motion } from "motion/react";
+import Wloader from "../loaders/w-loader";
+import Inloader from "../loaders/inloader";
 // import { usePathname } from "next/navigation";
 
 export default function Header() {
   const { data: session, status } = useSession();
   const { theme, setTheme } = useTheme();
+
+  const [isLoginLoader, setLoginLoader] = useState(false);
+  const [isLogOffLoader, setLogOffLoader] = useState(false);
 
   const {
     globalSuccessMessage,
@@ -43,7 +48,7 @@ export default function Header() {
   if (!mounted) return null;
 
   return (
-    <div className=" flex flex-row justify-between items-center h-20 md:h-25 lg:h-30 bg-white dark:bg-woodsmoke-800 px-6 mb-2 md:mb-4">
+    <div className=" flex flex-row justify-between items-center h-18 md:h-22 lg:h-26 bg-white dark:bg-woodsmoke-800 px-6 shadow-sm">
       {/* {theme == "dark" ? ( */}
       <Image
         suppressHydrationWarning
@@ -121,11 +126,23 @@ export default function Header() {
       <div className="flex flex-row justify-center items-center gap-3">
         {!session?.user ? (
           <div className="flex flex-row justify-center items-center gap-3">
-            <div className="flex flex-row items-center gap-2">
+            <div className="md:flex flex-row items-center gap-2 hidden">
               <Googlesignin />
               <div className="h-6 w-[0.5px] bg-woodsmoke-700 hover:underline hover:underline-offset-2"></div>
-              <Link href={"/auth/login"} className="flex mx-3">
-                Login
+              <Link
+                href={"/auth/login"}
+                className="flex mx-3"
+                onClick={() => {
+                  setLoginLoader(true);
+                }}
+              >
+                {isLoginLoader ? (
+                  <div className="flex flex-row justify-center items-center gap-2">
+                    <Inloader /> <p>loading...</p>
+                  </div>
+                ) : (
+                  "Login"
+                )}
               </Link>
             </div>
             <button
@@ -143,9 +160,10 @@ export default function Header() {
           </div>
         ) : (
           <div className="flex flex-row justify-center items-center gap-3">
-            {session.user.role == "staff" && (
-              <Link href={"/staff/dashboard"}>dashboard</Link>
-            )}
+            {session.user.role == "staff" ||
+              (session.user.role == "admin" && (
+                <Link href={"/staff/dashboard"}>dashboard</Link>
+              ))}
             <button
               onClick={() => {
                 setSideMenuOpen((prev) => !prev);
@@ -174,6 +192,31 @@ export default function Header() {
               <IconX color={`${theme == "dark" ? "white" : "white"}`} />
             </button>
           </div>
+
+          {status == "unauthenticated" && (
+            <div className="flex flex-col items-center gap-5 md:hidden w-full px-5">
+              <Googlesignin />
+              <Separator />
+              <Link
+                href={"/auth/login"}
+                className="flex mx-3 text-white"
+                onClick={() => {
+                  setLoginLoader(true);
+                }}
+              >
+                {isLoginLoader ? (
+                  <div className="flex flex-row justify-center items-center gap-2">
+                    <Inloader /> <p>loading...</p>
+                  </div>
+                ) : (
+                  <div className="flex justify-start items-center h-10 w-full">
+                    Login
+                  </div>
+                )}
+              </Link>
+            </div>
+          )}
+
           <div className="px-5 flex flex-col gap-2">
             <button
               className={`csbtn ${
@@ -197,8 +240,21 @@ export default function Header() {
             </button>
             <Separator />
             {status == "authenticated" && (
-              <div className="csbtn flex flex-row justify-between items-center">
-                <Logout /> <IconDoor />
+              <div
+                className="csbtn "
+                onClick={() => {
+                  setLogOffLoader(true);
+                }}
+              >
+                {isLogOffLoader ? (
+                  <div className="flex flex-row justify-center items-center gap-2 h-10">
+                    <Inloader /> <p>loading...</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-row justify-between items-center ">
+                    <Logout /> <IconDoor color="white" />
+                  </div>
+                )}
               </div>
             )}
           </div>

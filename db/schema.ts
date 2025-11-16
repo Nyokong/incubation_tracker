@@ -69,7 +69,7 @@ export const sessions = pgTable("session", {
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  expires: timestamp("expires", { mode: "date" }).notNull(),
+  expires: timestamp("expires", { withTimezone: true }).notNull(),
 });
 
 export const verificationTokens = pgTable(

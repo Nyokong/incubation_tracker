@@ -2,7 +2,7 @@
 
 import { Label } from "@/components/ui/label";
 import { OptionsType, QuestionsType, FormDraftType } from "@/types/next-auth";
-import { IconPencilPlus, IconPlus } from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 import { nanoid } from "nanoid";
 import { formReducer } from "./formReducer";
 import React, { useEffect, useReducer, useRef, useState } from "react";
@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { options } from "@/db/schema";
+// import { options } from "@/db/schema";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2 } from "lucide-react";
@@ -26,6 +26,7 @@ import { useGlobalNotify } from "@/context/globalnotifcations";
 import { useSession } from "next-auth/react";
 import Loading from "@/app/loading";
 import { redirect } from "next/navigation";
+import Whiteloader from "@/components/loaders/whiteloader";
 
 type QuestionType = "text" | "textarea" | "radio" | "checkbox";
 
@@ -43,6 +44,8 @@ export default function Createformpage() {
 
   const [isAddTitle, setAddIsTitle] = useState(false);
   const [isTitle, setTitle] = useState("");
+
+  const [isSubmitLoader, setSubmitLoader] = useState(false);
 
   const {
     setGlobalNotification,
@@ -103,12 +106,16 @@ export default function Createformpage() {
   }, [isAddTitle]);
 
   async function submitFormData() {
-    dispatch({
-      type: "SET_CREATOR",
-      createdById: session?.user.id,
-    });
-
+    // if (status == "authenticated") {
+    //   dispatch({
+    //     type: "SET_CREATOR",
+    //     createdById: session.user.id,
+    //   });
+    // } else {
+    //   console.log("not logged in");
+    // }
     console.log(form);
+
     const submit = await AddFormNew(form);
 
     if (submit != undefined) {
@@ -116,10 +123,12 @@ export default function Createformpage() {
 
       if (submit.success) {
         setGlobalsuccessMessage(submit.error);
+        setSubmitLoader(false);
 
         dispatch({ type: "RESET_FORM" });
       } else {
         setGlobalErrorMessage(submit.error);
+        setSubmitLoader(false);
       }
 
       // console.log(isSubmitError);
@@ -132,7 +141,7 @@ export default function Createformpage() {
 
   if (status == "loading") {
     return (
-      <div>
+      <div className="h-[70vh] flex justify-center items-center overflow-hidden">
         <Loading />
       </div>
     );
@@ -141,9 +150,9 @@ export default function Createformpage() {
   return (
     <div
       ref={isPageDiv}
-      className="flex flex-col justify-start items-center px-2 h-screen"
+      className="flex flex-col justify-between items-center px-2 h-screen"
     >
-      <div className="flex h-screen flex-col gap-3 w-[95%] sm:w-[85%] md:w-[65%] lg:w-[55%] 2xl:w-[50%] mb-2">
+      <div className="flex flex-col gap-3 w-[95%] sm:w-[85%] md:w-[65%] lg:w-[55%] 2xl:w-[50%] mb-2">
         {/* <div className="border-t-8 border-t-havelock-blue-700 rounded-t-md rounded-b-sm bg-[#f4f4f4] dark:bg-woodsmoke-950 h-auto px-3 py-7 flex flex-col gap-4 w-full items-center">
           {!isAddTitle ? (
             <div
@@ -260,7 +269,13 @@ export default function Createformpage() {
           )}
         </div> */}
 
-        <div>
+        {status == "authenticated" && (
+          <div>
+            <p>Logged in</p> <p>{session.user.id}</p>
+          </div>
+        )}
+
+        <div className="mt-5">
           <div className="border-t-8 border-t-[#1d4d8d] rounded-t-md rounded-b-sm bg-[#f8f8f8] dark:bg-woodsmoke-950 h-auto px-3 py-5 flex flex-col gap-4 mb">
             <div className="text-5xl font-medium ">
               <input
@@ -560,11 +575,24 @@ export default function Createformpage() {
           <button
             className="h-14 w-40 flex justify-center items-center  text-white bg-havelock-blue-600 rounded-sm cursor-pointer"
             onClick={() => {
+              setSubmitLoader(true);
+
+              dispatch({
+                type: "SET_CREATOR",
+                createdById: session?.user.id,
+              });
+
               submitFormData();
               // console.log(form);
             }}
           >
-            submit
+            {isSubmitLoader ? (
+              <div className="flex flex-row justify-center gap-2 items-center">
+                <Whiteloader /> <p>loading...</p>
+              </div>
+            ) : (
+              "submit"
+            )}
           </button>
 
           {form.questions.length > 0 && (

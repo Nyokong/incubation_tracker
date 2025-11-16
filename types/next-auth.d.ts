@@ -90,3 +90,9 @@ type OptionsType = {
   value: string;
   label: string;
 };
+
+type AdapterSession = {
+  sessionToken: string;
+  userId: string;
+  expires: Date;
+};

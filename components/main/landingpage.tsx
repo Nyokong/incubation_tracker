@@ -2,11 +2,16 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "next-themes";
 import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function Landingpage() {
-  const { theme } = useTheme();
+  const { data: session, status } = useSession();
+
+  if (status == "authenticated") {
+    if (session.user.role == "admin" || session.user.role == "staff")
+      return redirect("/staff/dashboard");
+  }
 
   return (
     <div>

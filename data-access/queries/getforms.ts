@@ -7,12 +7,12 @@ import { asc } from "drizzle-orm";
 
 import { FormType, QuestionsType } from "@/types/next-auth";
 
-export async function allForms() {
+export async function getAllForms() {
   const all = await db.select().from(forms);
   return all;
 }
 
-export async function getSharedForms(shareId: string) {
+export default async function getSharedForms(shareId: string) {
   const rows = await db
     .select()
     .from(forms)
@@ -45,3 +45,5 @@ export async function getSharedForms(shareId: string) {
 
   return { form, questionsArr };
 }
+
+// export default async function llForms

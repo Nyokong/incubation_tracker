@@ -4,14 +4,14 @@ import { db } from "@/db";
 import { responses } from "@/db/schema";
 
 type ReponseType = {
-  id: string;
   formId: string;
-  submittedAt: Date | null;
-  submittedBy: string | null;
+  submittedBy: string;
 };
 
 export default async function createResponse(res: ReponseType) {
   //   const response = await db.select().from(responses);
+
+  // console.log(res.submittedBy);
 
   const response = await db.insert(responses).values({
     formId: res.formId,

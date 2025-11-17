@@ -35,9 +35,10 @@ CREATE TABLE "forms" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"title" text NOT NULL,
 	"description" text DEFAULT '',
+	"status" text DEFAULT 'draft' NOT NULL,
 	"createdBy" text NOT NULL,
 	"createdAt" timestamp DEFAULT now(),
-	"shareId" text DEFAULT 'XetfeNvMIYuCFBPb1Q63l',
+	"shareId" text DEFAULT 'BsQPOTztnHUnivpCd0UMN',
 	CONSTRAINT "forms_shareId_unique" UNIQUE("shareId")
 );
 --> statement-breakpoint
@@ -61,13 +62,13 @@ CREATE TABLE "responses" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"formId" uuid NOT NULL,
 	"submittedAt" timestamp DEFAULT now(),
-	"submittedBy" uuid
+	"submittedBy" text
 );
 --> statement-breakpoint
 CREATE TABLE "session" (
 	"sessionToken" text PRIMARY KEY NOT NULL,
 	"userId" text NOT NULL,
-	"expires" timestamp NOT NULL
+	"expires" timestamp with time zone NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "users" (

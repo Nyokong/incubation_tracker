@@ -1,5 +1,5 @@
 {
-  "id": "a169afc1-5a64-4b99-b53c-b72fbf821568",
+  "id": "482ee67f-4285-42fc-ac82-d7e858b0dcee",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -269,6 +269,13 @@
           "notNull": false,
           "default": "''"
         },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'draft'"
+        },
         "createdBy": {
           "name": "createdBy",
           "type": "text",
@@ -287,7 +294,7 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "default": "'XetfeNvMIYuCFBPb1Q63l'"
+          "default": "'BsQPOTztnHUnivpCd0UMN'"
         }
       },
       "indexes": {},
@@ -449,7 +456,7 @@
         },
         "submittedBy": {
           "name": "submittedBy",
-          "type": "uuid",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -494,7 +501,7 @@
         },
         "expires": {
           "name": "expires",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
         }

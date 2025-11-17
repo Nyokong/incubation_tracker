@@ -152,7 +152,7 @@ export const responses = pgTable("responses", {
     .notNull()
     .references(() => forms.id),
   submittedAt: timestamp("submittedAt").defaultNow(),
-  submittedBy: uuid("submittedBy"), // optional user reference
+  submittedBy: text("submittedBy"), // optional user reference
 });
 
 export const answers = pgTable("answers", {

@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1763198288637,
-      "tag": "0000_lean_moondragon",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1763274815920,
-      "tag": "0001_tricky_beast",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1763307093126,
-      "tag": "0002_first_piledriver",
+      "when": 1763357535144,
+      "tag": "0000_tense_cardiac",
       "breakpoints": true
     }
   ]

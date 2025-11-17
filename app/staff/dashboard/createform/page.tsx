@@ -276,8 +276,8 @@ export default function Createformpage() {
         )}
 
         <div className="mt-5">
-          <div className="border-t-8 border-t-[#1d4d8d] rounded-t-md rounded-b-sm bg-[#f8f8f8] dark:bg-woodsmoke-950 h-auto px-3 py-5 flex flex-col gap-4 mb">
-            <div className="text-5xl font-medium ">
+          <div className="border-t-8 border-t-[#1d4d8d] rounded-t-md rounded-b-sm bg-[#f8f8f8] dark:bg-woodsmoke-950 h-auto px-3 py-10 flex flex-col gap-4 mb">
+            <div className="text-5xl font-medium  px-5">
               <input
                 placeholder="Form title"
                 value={form.title}
@@ -290,7 +290,7 @@ export default function Createformpage() {
                 className="w-full text-4xl borderlessInput"
               />
             </div>
-            <div className="flex flex-wrap items-center mb-1">
+            <div className="flex flex-wrap items-center mb-1 px-5">
               <textarea
                 className="w-full borderlessInput px-1 min-h-10"
                 placeholder="Form description"
@@ -378,7 +378,7 @@ export default function Createformpage() {
                 <input
                   placeholder="What is your question?"
                   value={q.title}
-                  className="borderlessInput transition-all duration-75 ease-in-out px-2 w-full h-10 bg-woodsmoke-100 text-md rounded-t-md focus:border-b-3 focus:border-b-havelock-blue-800 "
+                  className="borderlessInput transition-all duration-75 ease-in-out px-2 w-full h-10 bg-woodsmoke-100 dark:bg-woodsmoke-900 text-md rounded-t-md focus:border-b-3 focus:border-b-havelock-blue-800 "
                   onChange={(e) =>
                     dispatch({
                       type: "UPDATE_QUESTION",

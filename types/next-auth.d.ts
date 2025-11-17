@@ -96,3 +96,9 @@ type AdapterSession = {
   userId: string;
   expires: Date;
 };
+
+type ResponseType = {
+  questionId: string;
+  formId: string;
+  value: string;
+};

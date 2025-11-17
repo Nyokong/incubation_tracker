@@ -14,14 +14,14 @@ import Inloader from "@/components/loaders/inloader";
 export default function Loginpage() {
   const [state, formAction, isPending] = useActionState(loginAction, null);
 
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
   if (state && "success" in state && state.success) {
-    if (session?.user) {
-      if (session.user.role == "staff" || session.user.role == "admin") {
-        window.location.href = "/staff/dashboard";
-      }
-    }
+    // if (session?.user) {
+    //   if (session.user.role == "staff" || session.user.role == "admin") {
+    //   }
+    // }
+    window.location.href = "/";
   }
 
   if (status == "loading") {

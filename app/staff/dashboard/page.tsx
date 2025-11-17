@@ -1,22 +1,20 @@
 "use client";
 
 import Loading from "@/app/loading";
-import { allForms } from "@/data-access/queries/getforms";
+import { getAllForms } from "@/data-access/queries/getforms";
 import { FormType } from "@/types/next-auth";
 import { useSession } from "next-auth/react";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 export default function Staffdashboard() {
   const { data: session, status } = useSession();
-  const { theme } = useTheme();
 
   const [forms, setForms] = useState<FormType[]>([]);
 
   useEffect(() => {
     async function fetchForms() {
-      const forms = await allForms();
+      const forms = await getAllForms();
 
       setForms(forms);
     }
@@ -31,7 +29,7 @@ export default function Staffdashboard() {
   return (
     <div className="px-5 mt-4">
       <div className="w-full flex-row items-center ">
-        <div className="h-[100px] w-full bg-havelock-blue-50 p-5 rounded-md">
+        <div className="h-[100px] w-full bg-havelock-blue-50 dark:bg-woodsmoke-900 p-5 rounded-md">
           <h1 className="text-2xl font-medium">hey {session?.user?.name}</h1>
         </div>
       </div>
@@ -45,16 +43,16 @@ export default function Staffdashboard() {
         </Link>
       </div>
 
-      <div className="bg-[#f7f7f7] dark:bg-[#1d1d1d] rounded-[5px] border-t-7 border-t-[#ececec] mt-5 grid grid-cols-2">
+      <div className=" rounded-[5px] mt-5 grid grid-cols-1 md:grid-cols-2 gap-5 justify-center justify-items-center items-center p-5">
         {forms.map((entry, idx) => {
           return (
             <div
               key={idx}
-              className="min-h-20 flex flex-col gap-2 w-[90%] col-span-1 p-4"
+              className="min-h-20 flex flex-col gap-2 w-full md:w-[90%]  border-t-7 border-t-havelock-blue-600 rounded-t-md bg-white dark:bg-woodsmoke-800 p-4"
             >
               <h1 className="text-2xl font-medium">{entry.title}</h1>
               <p>{entry.description}</p>
-              <button className="w-30 h-10 flex justify-center items-center bg-[#376fb8] text-white rounded-md mt-2">
+              <button className="w-60 h-15 flex justify-center items-center bg-[#376fb8] text-white rounded-md mt-2">
                 <Link href={`/forms/${entry.shareId}`}>Open</Link>
               </button>
             </div>

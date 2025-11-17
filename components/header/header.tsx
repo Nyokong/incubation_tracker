@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import Googlesignin from "@/components/header/google_login";
 import Logout from "./logout";
@@ -21,8 +21,7 @@ import { LucideLightbulb } from "lucide-react";
 import { useGlobalNotify } from "@/context/globalnotifcations";
 
 import { motion } from "motion/react";
-import Wloader from "../loaders/w-loader";
-import Inloader from "../loaders/inloader";
+import Whiteloader from "../loaders/whiteloader";
 // import { usePathname } from "next/navigation";
 
 export default function Header() {
@@ -31,6 +30,8 @@ export default function Header() {
 
   const [isLoginLoader, setLoginLoader] = useState(false);
   const [isLogOffLoader, setLogOffLoader] = useState(false);
+
+  const sidemenuRef = useRef<HTMLDivElement>(null);
 
   const {
     globalSuccessMessage,
@@ -44,6 +45,22 @@ export default function Header() {
   const [mounted, setMounted] = useState(false);
   // const pathname = usePathname();
   React.useEffect(() => setMounted(true), []);
+
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        sidemenuRef.current &&
+        !sidemenuRef.current.contains(event.target as Node)
+      ) {
+        setSideMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   if (!mounted) return null;
 
@@ -138,7 +155,7 @@ export default function Header() {
               >
                 {isLoginLoader ? (
                   <div className="flex flex-row justify-center items-center gap-2">
-                    <Inloader /> <p>loading...</p>
+                    <Whiteloader /> <p>loading...</p>
                   </div>
                 ) : (
                   "Login"
@@ -181,7 +198,10 @@ export default function Header() {
       </div>
 
       {sideMenuOpen && (
-        <div className="absolute z-30 right-0 top-0 h-full w-[300px] bg-[#181818] flex flex-col gap-4">
+        <div
+          ref={sidemenuRef}
+          className="absolute z-30 right-0 top-0 h-full w-[300px] bg-[#181818] flex flex-col gap-4"
+        >
           <div className="w-full h-auto flex justify-start">
             <button
               onClick={() => {
@@ -206,7 +226,7 @@ export default function Header() {
               >
                 {isLoginLoader ? (
                   <div className="flex flex-row justify-center items-center gap-2">
-                    <Inloader /> <p>loading...</p>
+                    <Whiteloader /> <p>loading...</p>
                   </div>
                 ) : (
                   <div className="flex justify-start items-center h-10 w-full">
@@ -248,7 +268,7 @@ export default function Header() {
               >
                 {isLogOffLoader ? (
                   <div className="flex flex-row justify-center items-center gap-2 h-10">
-                    <Inloader /> <p>loading...</p>
+                    <Whiteloader /> <p>loading...</p>
                   </div>
                 ) : (
                   <div className="flex flex-row justify-between items-center ">

@@ -59,6 +59,7 @@ type FormType = {
   id: string;
   title: string;
   description: string | null;
+  status: "draft" | "published" | "archived";
   createdBy: string;
   createdAt: Date | null;
   shareId: string | null;

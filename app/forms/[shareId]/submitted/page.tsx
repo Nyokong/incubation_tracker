@@ -1,6 +1,11 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 
 export default function FormSubmitted() {
+  useEffect(() => {
+    // console.log('');
+  }, []);
   return (
     <div>
       <div>

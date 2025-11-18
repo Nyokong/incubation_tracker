@@ -3,10 +3,11 @@
 import { db } from "@/db";
 import { forms, options, questions } from "@/db/schema";
 import { FormDraftType, OptionsType, QuestionsType } from "@/types/next-auth";
+import { eq } from "drizzle-orm";
 
 import { v4 as uuidv4 } from "uuid";
 
-export default async function AddFormNew(form: FormDraftType) {
+export async function AddFormNew(form: FormDraftType) {
   // 1. Title check
   if (form.title.trim() === "") {
     return { error: "Error: Form doesn't have a title" };
@@ -71,4 +72,19 @@ export default async function AddFormNew(form: FormDraftType) {
 
   // ✅ Passed all checks
   return { success: true, error: "No-errors All checks clean" };
+}
+
+type SubmitType = {
+  id: string;
+};
+
+export async function puplishFormUpdate(id: string) {
+  const updateForm = await db
+    .update(forms)
+    .set({ status: "published" })
+    .where(eq(forms.id, id));
+
+  if (!updateForm) return { error: "update was unsuccessfull" };
+
+  return { success: true };
 }

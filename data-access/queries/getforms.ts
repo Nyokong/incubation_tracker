@@ -7,8 +7,16 @@ import { asc } from "drizzle-orm";
 
 import { FormType, QuestionsType } from "@/types/next-auth";
 
-export async function getAllForms() {
-  const all = await db.select().from(forms);
+export async function getDraftForms() {
+  const all = await db.select().from(forms).where(eq(forms.status, "draft"));
+  return all;
+}
+
+export async function getPublishedForms() {
+  const all = await db
+    .select()
+    .from(forms)
+    .where(eq(forms.status, "published"));
   return all;
 }
 

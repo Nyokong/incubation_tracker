@@ -151,7 +151,7 @@ export default function FormPage({
     });
 
     if (response.error == undefined) {
-      return redirect(`forms/${shareID.shareId}/submitted`);
+      return redirect(`${shareID.shareId}/submitted`);
     }
 
     // console.log(response);

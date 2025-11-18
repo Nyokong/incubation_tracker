@@ -24,7 +24,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2 } from "lucide-react";
-import AddFormNew from "@/data-access/mutations/submitforms";
+import { AddFormNew } from "@/data-access/mutations/submitforms";
 import { useGlobalNotify } from "@/context/globalnotifcations";
 import { useSession } from "next-auth/react";
 import Loading from "@/app/loading";
@@ -58,7 +58,6 @@ export default function Createformpage() {
 
   const {
     setGlobalNotification,
-    globalNotification,
     setGlobalsuccessMessage,
     setGlobalErrorMessage,
     globalErrorMessage,
@@ -172,7 +171,7 @@ export default function Createformpage() {
 
   // if logged in but not staff or admin
   if (status == "authenticated") {
-    if (session.user.role != "staff" || session.user.role != "admin") {
+    if (session.user.role == "user") {
       return redirect("/");
     }
   }

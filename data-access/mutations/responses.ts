@@ -19,8 +19,8 @@ export default async function createResponse(res: ReponseType) {
   });
 
   if (response) {
-    return { error: "Response logged" };
+    return { success: true };
+  } else {
+    return { error: "Response submission failed!" };
   }
-
-  return null;
 }

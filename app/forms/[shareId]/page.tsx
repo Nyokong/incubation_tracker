@@ -2,6 +2,7 @@
 
 // import Viewtemplateform from "@/components/forms/viewtemplate";
 import Blackloader from "@/components/loaders/blackloader";
+import Wloader from "@/components/loaders/w-loader";
 import Whiteloader from "@/components/loaders/whiteloader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,6 +13,7 @@ import getSharedForms from "@/data-access/queries/getforms";
 import { FormType, OptionsType, QuestionsType } from "@/types/next-auth";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
+import { redirect } from "next/navigation";
 
 import React, { use, useState, useEffect } from "react";
 
@@ -37,22 +39,48 @@ export default function FormPage({
 
   const [isResponse, setResponse] = useState<ResponseType[]>([]);
   const [isLoggedOff, setIsLoggedOff] = useState(false);
+  const [isFormCheck, setIsFormChecked] = useState(false);
+  const [isFormLoading, setIsFormLoading] = useState(false);
 
   const { theme } = useTheme();
 
+  const [countdown, setCountdown] = React.useState(10);
+  // wait 10 seconds count down then redirect to home page
+
   useEffect(() => {
     async function fetchForm() {
+      setIsFormLoading(true);
       const data = await getSharedForms(shareID.shareId);
-
-      // console.log(shareID.shareId);
 
       if (data) {
         setForm(data);
+        setIsFormChecked(true);
+        setIsFormLoading(false);
       }
     }
 
     fetchForm();
   }, []);
+
+  React.useEffect(() => {
+    if (!isFormCheck) {
+      const timer = setTimeout(async () => {
+        setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+        if (countdown === 0) {
+          if (form?.questionsArr == undefined) {
+            setIsFormLoading(true);
+            const data = await getSharedForms(shareID.shareId);
+
+            if (data) {
+              setForm(data);
+              setIsFormLoading(false);
+            }
+          }
+        }
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
 
   if (status == "loading") {
     return (
@@ -63,20 +91,32 @@ export default function FormPage({
     );
   }
 
-  if (form == undefined)
+  if (isFormLoading) {
     return (
-      <div className="flex justify-center items-center h-[60vh]">
+      <div className="flex justify-center items-center h-[70vh]">
         {theme == "dark" ? (
-          <div className="flex justify-center gap-4 items-center flex-row">
-            <p>Form not found</p> <Whiteloader />
+          <div>
+            <Wloader /> <p>loading...</p>
           </div>
         ) : (
-          <div className="flex justify-center gap-4 items-center flex-row">
-            <Blackloader /> <p>Form not found</p>
+          <div>
+            <Blackloader /> <p>loading...</p>
           </div>
         )}
       </div>
     );
+  }
+
+  if (form == undefined) {
+    return (
+      <div className="flex justify-center items-center h-[60vh]">
+        <div className="flex justify-center gap-4 items-center flex-row">
+          <Whiteloader /> <p>Form not found</p>
+          <p>Trying again in</p> <p>{countdown} seconds</p>
+        </div>
+      </div>
+    );
+  }
 
   // Add or update a response
   const handleChange = (questionId: string, value: string, formId: string) => {
@@ -110,7 +150,11 @@ export default function FormPage({
       submittedBy: session?.user.id,
     });
 
-    console.log(response);
+    if (response.error == undefined) {
+      return redirect(`forms/${shareID.shareId}/submitted`);
+    }
+
+    // console.log(response);
   };
 
   return (
@@ -120,7 +164,7 @@ export default function FormPage({
     <div className="relative flex justify-center flex-col items-center">
       {isLoggedOff && (
         <div className=" w-screen h-full flex justify-center items-center">
-          <div className="h-auto w-[300px] bg-red-600 rounded-md my-5 p-5">
+          <div className="h-auto w-[300px] bg-red-800 rounded-md my-5 p-5">
             <p>You are not logged in</p>
             <p>Providing your emails helps with reaching out</p>
           </div>
@@ -190,7 +234,7 @@ export default function FormPage({
                       onBlur={(e) =>
                         handleChange(entry.id, e.target.value, form.form.id)
                       }
-                      className="min-h-20 w-full text-black p-2 border-b-4 rounded-t-sm border-t border-l border-r focus:bg-[#e5eaec] transition duration-75 ease-in-out shadow-none hover:rounded-none hover:border-t hover:border-l hover:border-r hover:border-b-[#4b7cb8] focus:border-t focus:border-l focus:border-r focus:border-b-[#4b7cb8] focus:ring-0 focus:outline-none hover:ring-0"
+                      className="min-h-20 w-full text-black dark:text-white dark:bg-woodsmoke-900 p-2 border-b-4 rounded-t-sm border-t border-l border-r focus:bg-[#e5eaec] dark:focus:bg-woodsmoke-900 transition duration-75 ease-in-out shadow-none hover:rounded-none hover:border-t hover:border-l hover:border-r hover:border-b-[#4b7cb8] focus:border-t focus:border-l focus:border-r focus:border-b-[#4b7cb8] focus:ring-0 focus:outline-none hover:ring-0"
                     />
                   )}
                 </div>

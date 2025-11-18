@@ -62,6 +62,14 @@ export default function Header() {
     };
   }, []);
 
+  React.useEffect(() => {
+    if (sideMenuOpen) {
+      document.body.style.overflow = "hidden"; // disable page scroll
+    } else {
+      document.body.style.overflow = ""; // restore scroll
+    }
+  }, [sideMenuOpen]);
+
   if (!mounted) return null;
 
   return (
@@ -200,7 +208,7 @@ export default function Header() {
       {sideMenuOpen && (
         <div
           ref={sidemenuRef}
-          className="absolute z-30 right-0 top-0 h-full w-[300px] bg-[#181818] flex flex-col gap-4"
+          className="absolute z-30 right-0 top-0 min-h-screen w-[300px] bg-[#181818] flex flex-col gap-4"
         >
           <div className="w-full h-auto flex justify-start">
             <button
@@ -236,6 +244,29 @@ export default function Header() {
               </Link>
             </div>
           )}
+
+          {(status == "authenticated" && session.user.role == "staff") ||
+            (session?.user.role == "admin" && (
+              <div>
+                <Link
+                  href={"/staff/dashboard/createform"}
+                  className="flex mx-3 text-white"
+                  onClick={() => {
+                    setLoginLoader(true);
+                  }}
+                >
+                  {isLoginLoader ? (
+                    <div className="flex flex-row justify-center items-center gap-2">
+                      <Whiteloader /> <p>loading...</p>
+                    </div>
+                  ) : (
+                    <div className="flex justify-start items-center h-10 w-full px-2">
+                      Create New Form
+                    </div>
+                  )}
+                </Link>
+              </div>
+            ))}
 
           <div className="px-5 flex flex-col gap-2">
             <button

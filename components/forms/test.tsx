@@ -1,54 +1,72 @@
 "use client";
 
-import getSharedForms, { getAllForms } from "@/data-access/queries/getforms";
-import { FormType, QuestionsType } from "@/types/next-auth";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { useGlobalNotify } from "@/context/globalnotifcations";
+// import getSharedForms, { getAllForms } from "@/data-access/queries/getforms";
+// import { FormType, QuestionsType } from "@/types/next-auth";
+import { AnimatePresence, motion } from "motion/react";
+import React, { useEffect, useRef, useState } from "react";
 
-type FormWithQuestions = {
-  form: FormType;
-  questionsArr: QuestionsType[];
-};
+// type FormWithQuestions = {
+//   form: FormType;
+//   questionsArr: QuestionsType[];
+// };
 
 export default function Test() {
   //   const [isResponse, setResponse] = useState<ResponseType[]>([]);
 
-  const [form, setForm] = React.useState<FormWithQuestions>();
-  const [forms, setForms] = useState<FormType[]>([]);
+  // const [form, setForm] = React.useState<FormWithQuestions>();
+  // const [forms, setForms] = useState<FormType[]>([]);
+
+  const { globalNotification } = useGlobalNotify();
+
+  const notifRef = useRef<HTMLDivElement>(null);
+  const [prevScroll, setPrevScroll] = useState<number | null>(null);
 
   useEffect(() => {
-    async function fetchForm() {
-      const data = await getSharedForms("15344d2a-7c4f-4d31-910c-d47b0c038e39");
+    if (globalNotification && notifRef.current) {
+      // Save current scroll position
+      setPrevScroll(window.scrollY);
 
-      // console.log(shareID.shareId);
+      // Scroll to notification
+      notifRef.current.scrollIntoView({ behavior: "smooth" });
 
-      if (data) {
-        setForm(data);
-      }
+      // Optionally scroll back after a delay
+      const timer = setTimeout(() => {
+        if (prevScroll !== null) {
+          window.scrollTo({ top: prevScroll, behavior: "smooth" });
+        }
+      }, 3000); // 3s delay
+
+      return () => clearTimeout(timer);
     }
-
-    fetchForm();
-  }, []);
-
-  useEffect(() => {
-    async function fetchForms() {
-      const forms = await getAllForms();
-
-      setForms(forms);
-    }
-
-    fetchForms();
-  }, []);
+  }, [globalNotification]);
 
   return (
     <div className="text-white">
-      test{form?.form.id}
-      {forms.map((entry, idx) => (
-        <div key={idx}>
-          {entry.id}
-          <Link href={`/forms/${entry.shareId}`}>goasda</Link>
-        </div>
-      ))}
+      <div style={{ height: "1500px" }}>Lots of content here...</div>
+
+      {/* Notification */}
+      <AnimatePresence>
+        {globalNotification && (
+          <motion.div
+            ref={notifRef}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              position: "relative",
+              margin: "20px auto",
+              padding: "16px",
+              background: "orange",
+              borderRadius: "8px",
+              width: "fit-content",
+            }}
+          >
+            Global Notification!
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { getAllForms } from "@/data-access/queries/getforms";
 import { FormType } from "@/types/next-auth";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 export default function Staffdashboard() {
@@ -24,6 +25,21 @@ export default function Staffdashboard() {
 
   if (status == "loading") {
     return <Loading />;
+  }
+
+  // if not logged in kick him out
+  if (status == "unauthenticated") {
+    return redirect("/");
+  }
+
+  // if logged in but not staff or admin
+  if (status == "authenticated") {
+    if (session.user.role != "staff" && session.user.role != "admin") {
+      return redirect("/");
+    }
+    // if () {
+    //   return redirect("/");
+    // }
   }
 
   return (

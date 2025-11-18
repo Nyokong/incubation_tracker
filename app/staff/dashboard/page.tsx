@@ -34,7 +34,7 @@ export default function Staffdashboard() {
 
   // if logged in but not staff or admin
   if (status == "authenticated") {
-    if (session.user.role != "staff" && session.user.role != "admin") {
+    if (session.user.role == "user") {
       return redirect("/");
     }
     // if () {

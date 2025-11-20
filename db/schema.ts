@@ -165,3 +165,10 @@ export const answers = pgTable("answers", {
     .references(() => questions.id),
   value: text("value").notNull(), // could be JSON if multi-select
 });
+
+export const guests = pgTable("guests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("value").notNull(),
+  formId: uuid("formId").references(() => forms.id),
+  submittedAt: timestamp("submittedAt").defaultNow(),
+});

@@ -98,28 +98,28 @@ export default function Header() {
             opacity: 1,
             transition: { duration: 0.25, ease: "easeIn" },
           }}
-          className="fixed z-20 flex justify-center items-center w-full h-[200px] md:h-[100px] dark:bg-[#3636368f] text-white bg-[#f3f3f38f]"
+          className="fixed left-0 z-20 flex pt-5 justify-center items-center w-screen h-[200px] md:h-[100px] dark:bg-[#363636da] text-white bg-[#f3f3f3da]"
         >
           {globalErrorMessage != "" && (
             <motion.div
               exit={{ opacity: 0 }}
-              initial={{ opacity: 0.2 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0.2, y: 0 }}
+              animate={{ opacity: 1, y: "30%" }}
               transition={{ duration: 0.25 }}
-              className="flex justify-center items-center flex-row w-[300px] gap-2.5 px-2.5 py-2.5 rounded-2xl shadow-sm dark:shadow-[#242424] h-auto bg-[#b14b4b] dark:bg-[#963f3f] dark:text-white"
+              className="flex justify-center items-center flex-row w-[300px] gap-2.5 px-2.5 py-5 rounded-2xl shadow-sm dark:shadow-[#242424] h-auto bg-[#b14b4b] dark:bg-[#963f3f] dark:text-white"
             >
-              <IconAlertTriangleFilled size={40} className="mx-4" />
+              <IconAlertTriangleFilled size={30} className="mx-4" />
               <p className="max-w-[180px] mx-[5px] flex justify-center items-center">
                 {globalErrorMessage}
               </p>
-              <button
+              {/* <button
                 onClick={() => {
                   setGlobalNotification(false);
                 }}
                 className="  h-[30px] w-[30px]  cursor-pointer rounded-3xl hover:rotate-45 ease-in-out transition-transform duration-250 hover:bg-[#2e2e2e] flex justify-center items-center"
               >
                 <IconX size={20} />
-              </button>
+              </button> */}
             </motion.div>
           )}
 
@@ -151,7 +151,7 @@ export default function Header() {
       <div className="flex flex-row justify-center items-center gap-3">
         {!session?.user ? (
           <div className="flex flex-row justify-center items-center gap-3">
-            <div className="md:flex flex-row items-center gap-2 hidden">
+            <div className="md:flex flex-row text-white items-center gap-2 hidden">
               <Googlesignin />
               <div className="h-6 w-[0.5px] bg-woodsmoke-700 hover:underline hover:underline-offset-2"></div>
               <Link
@@ -222,7 +222,7 @@ export default function Header() {
           </div>
 
           {status == "unauthenticated" && (
-            <div className="flex flex-col items-center gap-5 md:hidden w-full px-5">
+            <div className="flex flex-col text-white items-center gap-5 md:hidden w-full px-5">
               <Googlesignin />
               <Separator />
               <Link

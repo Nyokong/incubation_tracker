@@ -143,7 +143,7 @@ export default function Staffdashboard() {
       </div> */}
 
       {isGeneratingLink && (
-        <div className="absolute bg-white w-full h-full z-20 flex justify-center items-center">
+        <div className="absolute bg-white dark:bg-woodsmoke-900 w-full h-full z-20 flex justify-center items-center">
           {progress}
           <Progress value={progress} className="w-50" />
         </div>
@@ -158,21 +158,28 @@ export default function Staffdashboard() {
         <div className="w-full flex justify-start items-center px-10">
           <Link
             href={"/staff/dashboard/createform"}
-            className="bg-[#f9f9f9] cursor-pointer hover:underline underline-offset-4 h-35 w-35 rounded-md py-3 px-8 flex justify-center items-center shadow-sm"
+            className="bg-[#f9f9f9] dark:bg-woodsmoke-950 cursor-pointer hover:underline underline-offset-4 h-35 w-35 rounded-md py-3 px-8 flex justify-center items-center shadow-sm"
           >
             <IconPlus />
           </Link>
         </div>
       </div>
 
-      <div className="bg-[#f0f0f0] w-full h-full pb-10">
-        <div className="px-2 sm:px-2 md:px-2 lg:px-20 h-25 flex items-center">
-          <h1 className="text-2xl md:text-4xl font-semibold ">
+      <div className="bg-[#f0f0f0] dark:bg-woodsmoke-950 w-full h-full pb-10">
+        {/* <div className="h-25 flex items-center">
+          <h1 className="text-5xl px-20 sm:px-5 md:px-5 lg:px-25 text-woodsmoke-800 dark:text-white">
             The Team's Forms
           </h1>
+        </div> */}
+
+        <div className="px-20 sm:px-5 md:px-5 lg:px-20">
+          <Separator className="my-5" />
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-5">
+          <div className="text-5xl px-20 sm:px-5 md:px-5 lg:px-25 text-woodsmoke-800 dark:text-white">
+            <h1>Draft Forms</h1>
+          </div>
           <div className=" py-5 rounded-[5px] mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-5 justify-center justify-items-center items-center px-2 sm:px-2 md:px-2 lg:px-25">
             {draftforms.map((entry, idx) => {
               return (
@@ -197,7 +204,9 @@ export default function Staffdashboard() {
                         href={`/forms/${entry.shareId}`}
                         className="cursor-pointer"
                       >
-                        <div className="bg-[#f8f8f8] h-25 w-full flex justify-center items-center rounded-xl">
+                        <div
+                          className={`bg-[#f8f8f8] dark:bg-woodsmoke-800 h-25 w-full flex justify-center items-center rounded-xl`}
+                        >
                           <IconForms size={40} className="opacity-25" />
                         </div>
                       </Link>
@@ -249,80 +258,91 @@ export default function Staffdashboard() {
             })}
           </div>
 
-          <div className="py-5 rounded-[5px] mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-5 justify-center justify-items-center items-center px-2 sm:px-2 md:px-2 lg:px-25">
-            {publishedforms.map((entry, idx) => {
-              return (
-                <div
-                  key={idx}
-                  className="relative shadow-md inset-shadow-sm min-h-70 min-w-80 md:min-w-60 max-w-100 md:max-w-70 flex flex-col justify-between gap-2 p-5 rounded-xl bg-white dark:bg-woodsmoke-900 "
-                >
-                  <div className="absolute -top-2 -left-2 z-10">
-                    <p className="h-6 w-6 rounded-md bg-woodsmoke-800 text-white flex justify-center items-center">
-                      {idx + 1}
-                    </p>
-                  </div>
+          <div className="px-20 sm:px-5 md:px-5 lg:px-20">
+            <Separator className="my-5" />
+          </div>
 
-                  <div>
-                    <div className="min-h-40 flex flex-col gap-2">
-                      <div className="min-h-15 max-h-20 flex justify-cecnter -center flex-col ">
-                        <h1 className="text-2xl font-medium">{entry.title}</h1>
-                        <p>{entry.description}</p>
-                      </div>
+          <div className="flex flex-col gap-5">
+            <div className="text-5xl px-20 sm:px-5 md:px-5 lg:px-25 text-woodsmoke-800 dark:text-white">
+              <h1>Published Forms</h1>
+            </div>
+            <div className="py-5 rounded-[5px] mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-5 justify-center justify-items-center items-center px-2 sm:px-2 md:px-2 lg:px-25">
+              {publishedforms.map((entry, idx) => {
+                return (
+                  <div
+                    key={idx}
+                    className="relative shadow-md inset-shadow-sm min-h-70 min-w-80 md:min-w-60 max-w-100 md:max-w-70 flex flex-col justify-between gap-2 p-5 rounded-xl bg-white dark:bg-woodsmoke-900 "
+                  >
+                    <div className="absolute -top-2 -left-2 z-10">
+                      <p className="h-6 w-6 rounded-md bg-woodsmoke-800 text-white flex justify-center items-center">
+                        {idx + 1}
+                      </p>
+                    </div>
 
-                      <Link
-                        href={`/forms/${entry.shareId}`}
-                        className="cursor-pointer"
-                      >
-                        <div className="bg-[#f8f8f8] h-25 w-full flex justify-center items-center rounded-xl">
-                          <IconForms size={40} className="opacity-25" />
+                    <div>
+                      <div className="min-h-40 flex flex-col gap-2">
+                        <div className="min-h-15 max-h-20 flex justify-cecnter -center flex-col ">
+                          <h1 className="text-2xl font-medium">
+                            {entry.title}
+                          </h1>
+                          <p>{entry.description}</p>
                         </div>
-                      </Link>
 
-                      <div className="flex flex-col">
-                        <p className="text-[10px]">made in:</p>
-                        <p>{`${dateFormart(entry.createdAt!)}`}</p>
+                        <Link
+                          href={`/forms/${entry.shareId}`}
+                          className="cursor-pointer"
+                        >
+                          <div className="bg-[#f8f8f8] dark:bg-woodsmoke-800 h-25 w-full flex justify-center items-center rounded-xl">
+                            <IconForms size={40} className="opacity-25" />
+                          </div>
+                        </Link>
+
+                        <div className="flex flex-col">
+                          <p className="text-[10px]">made in:</p>
+                          <p>{`${dateFormart(entry.createdAt!)}`}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <Separator />
-                  <div>
-                    <p className="h-10 flex items-center">{entry.status}</p>
-                    <div className="flex flex-row justify-end">
-                      <Popover>
-                        <PopoverTrigger>
-                          <IconDotsVertical />
-                        </PopoverTrigger>
-                        <PopoverContent className="w-40">
-                          <div className=" flex flex-col gap-3">
-                            <p
-                              onClick={() => {
-                                publishForm(entry.id);
-                              }}
-                            >
-                              publish
-                            </p>
-                            <p>delete</p>
-                            <Separator />
-                            <div className="w-full h-10 px-4 rounded-sm flex justify-center items-center bg-havelock-blue-600 text-white">
+                    <Separator />
+                    <div>
+                      <p className="h-10 flex items-center">{entry.status}</p>
+                      <div className="flex flex-row justify-end">
+                        <Popover>
+                          <PopoverTrigger>
+                            <IconDotsVertical />
+                          </PopoverTrigger>
+                          <PopoverContent className="w-40">
+                            <div className=" flex flex-col gap-3">
                               <p
                                 onClick={() => {
-                                  generateLink();
+                                  publishForm(entry.id);
                                 }}
                               >
-                                generate link
+                                publish
                               </p>
+                              <p>delete</p>
+                              <Separator />
+                              <div className="w-full h-10 px-4 rounded-sm flex justify-center items-center bg-havelock-blue-600 text-white">
+                                <p
+                                  onClick={() => {
+                                    generateLink();
+                                  }}
+                                >
+                                  generate link
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                    {/* <button className="w-full h-10 flex justify-center items-center bg-[#376fb8] text-white rounded-4xl mt-2">
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      {/* <button className="w-full h-10 flex justify-center items-center bg-[#376fb8] text-white rounded-4xl mt-2">
                     <Link href={`/forms/${entry.shareId}`}>Open</Link>
                   </button> */}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

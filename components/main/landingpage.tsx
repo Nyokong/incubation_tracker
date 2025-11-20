@@ -2,16 +2,16 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { redirect } from "next/navigation";
-import { useSession } from "next-auth/react";
+// import { redirect } from "next/navigation";
+// import { useSession } from "next-auth/react";
 
 export default function Landingpage() {
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
 
-  if (status == "authenticated") {
-    if (session.user.role == "admin" || session.user.role == "staff")
-      return redirect("/staff/dashboard");
-  }
+  // if (status == "authenticated") {
+  //   if (session.user.role == "admin" || session.user.role == "staff")
+  //     return redirect("/staff/dashboard");
+  // }
 
   return (
     <div>

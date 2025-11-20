@@ -85,6 +85,6 @@ async function seedQuestions() {
   console.log({ questions: insertedQuestions });
 }
 
-seedQuestions()
-  .then(() => console.log("✅ Seed complete"))
-  .catch((err) => console.error("❌ Seed error:", err));
+// seedQuestions()
+//   .then(() => console.log("✅ Seed complete"))
+//   .catch((err) => console.error("❌ Seed error:", err));

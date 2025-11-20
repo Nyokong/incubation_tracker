@@ -1,0 +1,215 @@
+  // const handleChange = (
+  //   questionId: string,
+  //   value: string,
+  //   formId: string,
+  //   type: string
+  // ) => {
+  //   setResponse((prev) => {
+  //     // clone previous state
+  //     let updated = { ...prev };
+
+  //     // ensure questions array exists
+  //     if (!updated.questions) {
+  //       updated.questions = [];
+  //     }
+
+  //     switch (type) {
+  //       case "checkbox": {
+  //         // toggle add/remove
+  //         const exists = updated.questions.some(
+  //           (q) => q.questionId === questionId && q.value === value
+  //         );
+
+  //         if (exists) {
+  //           updated.questions = updated.questions.filter(
+  //             (q) => !(q.questionId === questionId && q.value === value)
+  //           );
+  //         } else {
+  //           updated.questions.push({ questionId, value, type });
+  //         }
+  //         break;
+  //       }
+
+  //       case "radio":
+  //       case "dropdown": {
+  //         // only one value per questionId
+  //         updated.questions = updated.questions.filter(
+  //           (q) => q.questionId !== questionId
+  //         );
+  //         updated.questions.push({ questionId, value, type });
+  //         break;
+  //       }
+
+  //       case "text":
+  //       case "textarea": {
+  //         // overwrite single value
+  //         const existingIndex = updated.questions.findIndex(
+  //           (q) => q.questionId === questionId
+  //         );
+  //         if (existingIndex !== -1) {
+  //           updated.questions[existingIndex] = {
+  //             ...updated.questions[existingIndex],
+  //             value,
+  //           };
+  //         } else {
+  //           updated.questions.push({ questionId, value, type });
+  //         }
+  //         break;
+  //       }
+
+  //       default: {
+  //         // fallback: overwrite or add
+  //         const existingIndex = updated.questions.findIndex(
+  //           (q) => q.questionId === questionId
+  //         );
+  //         if (existingIndex !== -1) {
+  //           updated.questions[existingIndex] = {
+  //             ...updated.questions[existingIndex],
+  //             value,
+  //             type,
+  //           };
+  //         } else {
+  //           updated.questions.push({ questionId, value, type });
+  //         }
+  //       }
+  //     }
+
+  //     return updated;
+  //   });
+  // };
+
+  // Add or update a response
+  // const handleChange = (
+  //   questionId: string,
+  //   value: string,
+  //   formId: string,
+  //   type: string
+  // ) => {
+  //   setResponse((prev) => {
+  //     const existingIndex = prev.findIndex(
+  //       (r) => r.questionId === questionId || r.formId === formId
+  //     );
+
+  //     // check for checkbox
+  //     const checkedBox = prev.findIndex(
+  //       (cb) => cb.type == "checkbox" && cb.value != value
+  //     );
+
+  //     // console.log(checkedBox);
+
+  //     if (checkedBox !== -1) {
+  //       [...prev, { questionId, formId: formId, value, type: type }];
+  //     }
+
+  //     if (existingIndex !== -1) {
+  //       // Only update the value, leave questionId and formId untouched
+  //       const updated = [...prev];
+  //       updated[existingIndex] = {
+  //         ...updated[existingIndex],
+  //         value, // replace just the value
+  //       };
+  //       return updated;
+  //     }
+
+  //     // Add new response if it doesn't exist yet
+  //     return [...prev, { questionId, formId: formId, value, type: type }];
+  //   });
+
+  //   console.log(isCheckboxSelected);
+  // };
+
+  // const handleChange = (
+  //   questionId: string,
+  //   value: string,
+  //   formId: string,
+  //   type: string
+  // ) => {
+  //   setResponse((prev) => {
+  //     let updated = [...prev];
+
+  //     console.log(updated);
+
+  //     if (type === "checkbox") {
+  //       // Check if this option already exists for this question
+  //       const exists = updated.some(
+  //         (r) => r.questionId === questionId && r.value === value
+  //       );
+
+  //       if (exists) {
+  //         // Remove it if already selected
+  //         updated = updated.filter(
+  //           (r) => !(r.questionId === questionId && r.value === value)
+  //         );
+  //       } else {
+  //         // Add it if not selected
+  //         updated.push({ questionId, formId, value, type });
+  //       }
+
+  //       return updated;
+  //     }
+
+  //     // For radio/text/textarea → overwrite
+  //     const existingIndex = updated.findIndex(
+  //       (r) => r.questionId === questionId || r.formId === formId
+  //     );
+
+  //     if (existingIndex !== -1) {
+  //       updated[existingIndex] = {
+  //         ...updated[existingIndex],
+  //         value,
+  //         type,
+  //       };
+  //       return updated;
+  //     }
+
+  //     // Add new response if none exists
+  //     updated.push({ questionId, formId, value, type });
+  //     return updated;
+  //   });
+  // };
+
+  // const handleCheckBoxChange = (
+  //   formId: string,
+  //   questionId: string,
+  //   option: string,
+  //   checked: boolean
+  // ) => {
+  //   // For checkboxes we store one ResponseType per selected option for a question.
+  //   // When checked=true we add the (questionId, formId, option) entry if not present,
+  //   // when checked=false we remove that specific entry.
+  //   setCheckboxSelected((prev) => {
+  //     if (checked) {
+  //       const exists = prev.some(
+  //         (r) => r.questionId === questionId && r.value === option
+  //       );
+  //       if (exists) return prev;
+  //       return [...prev, { questionId, formId, value: option }];
+  //     }
+
+  //     return prev.filter(
+  //       (r) => !(r.questionId === questionId && r.value === option)
+  //     );
+  //   });
+
+  //   console.log(isCheckboxSelected);
+  // };
+
+  // const handleCheckbox = ()
+
+  // Add a new answer
+setAnswers(prev => [
+  ...prev,
+  { id: "a1", responseId: "r1", questionId: "q1", value: "Option A" }
+]);
+
+// Remove an answer
+setAnswers(prev =>
+  prev.filter(a => !(a.questionId === "q1" && a.value === "Option A"))
+);
+
+// Update an answer
+setAnswers(prev =>
+  prev.map(a =>
+    a.id === "a1" ? { ...a, value: "Updated value" } : a
+  )
+);

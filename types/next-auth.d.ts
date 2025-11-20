@@ -103,3 +103,16 @@ type ResponseType = {
   formId: string;
   value: string;
 };
+
+type QuestionsAnswerType = {
+  value: string;
+  questionId: string;
+  type: string;
+};
+
+type AnswersType = {
+  id: string;
+  responseId: string;
+  questionId: string;
+  value: string;
+};

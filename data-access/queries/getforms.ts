@@ -20,7 +20,7 @@ export async function getPublishedForms() {
   return all;
 }
 
-export default async function getSharedForms(shareId: string) {
+export async function getSharedForms(shareId: string) {
   const rows = await db
     .select()
     .from(forms)

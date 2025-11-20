@@ -88,7 +88,7 @@ async function seedStaff() {
   console.log("Staff seeded");
 }
 
-seedStaff().catch((err) => {
-  console.error("❌ Seeding Staff failed:", err);
-  process.exit(1);
-});
+// seedStaff().catch((err) => {
+//   console.error("❌ Seeding Staff failed:", err);
+//   process.exit(1);
+// });

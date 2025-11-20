@@ -93,6 +93,6 @@ async function seedFormWithQuestions() {
   // });
 }
 
-// seedFormWithQuestions()
-//   .then(() => console.log("✅ Seed complete"))
-//   .catch((err) => console.error("❌ Seed error:", err));
+seedFormWithQuestions()
+  .then(() => console.log("✅ Seed complete"))
+  .catch((err) => console.error("❌ Seed error:", err));

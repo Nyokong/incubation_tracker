@@ -165,7 +165,7 @@ export default function Staffdashboard() {
   const generateLink = async (shareid: string) => {
     // setGenerateLink(true);
 
-    if (isLink !== null) {
+    if (isLink == undefined) {
       setIsLink(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/forms/${shareid}`);
 
       setGlobalNotification(true);

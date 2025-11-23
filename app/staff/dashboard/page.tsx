@@ -316,21 +316,22 @@ export default function Staffdashboard() {
                     <p className="h-10 flex items-center">{entry.status}</p>
                     <div className="flex flex-row justify-end">
                       <Popover>
-                        <PopoverTrigger>
+                        <PopoverTrigger className="cursor-pointer">
                           <IconDotsVertical />
                         </PopoverTrigger>
                         <PopoverContent className="w-40">
                           <div className=" flex flex-col gap-4">
-                            <p
+                            <button
                               onClick={() => {
                                 publishForm(entry.id);
                               }}
+                              className="cursor-pointer"
                             >
                               publish
-                            </p>
+                            </button>
                             <Separator />
                             <button
-                              className="h-8 w-full bg-red-500 px-3 rounded-md text-white flex justify-start flex-row items-center"
+                              className="cursor-pointer h-8 w-full bg-red-500 px-3 rounded-md text-white flex justify-start flex-row items-center"
                               onClick={() => {
                                 deleteById(entry.id);
                               }}
@@ -445,21 +446,22 @@ export default function Staffdashboard() {
                       <p className="h-10 flex items-center">{entry.status}</p>
                       <div className="flex flex-row justify-end">
                         <Popover>
-                          <PopoverTrigger>
+                          <PopoverTrigger className="cursor-pointer">
                             <IconDotsVertical />
                           </PopoverTrigger>
                           <PopoverContent className="w-40">
                             <div className=" flex flex-col gap-4">
-                              <p
+                              <button
                                 onClick={() => {
                                   makeDraftForm(entry.id);
                                 }}
+                                className="cursor-pointer"
                               >
                                 Draft?
-                              </p>
+                              </button>
                               <Separator />
                               <button
-                                className="h-8 w-full bg-red-500 px-3 rounded-md text-white flex justify-start flex-row items-center"
+                                className="cursor-pointer h-8 w-full bg-red-500 px-3 rounded-md text-white flex justify-start flex-row items-center"
                                 onClick={() => {
                                   deleteById(entry.id);
                                 }}

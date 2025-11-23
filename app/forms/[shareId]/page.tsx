@@ -549,10 +549,10 @@ export default function FormPage({
                                 <RadioGroupItem
                                   value={`${option.value}`}
                                   id={`${option.id}`}
-                                  onBlur={(e) =>
+                                  onClick={(e) =>
                                     handleChange(
                                       entry.id,
-                                      e.target.value,
+                                      option.label,
                                       form.form.id,
                                       entry.type
                                     )
@@ -580,7 +580,7 @@ export default function FormPage({
                                 <div className="flex flex-row items-center min-h-8 gap-2.5 ">
                                   <Checkbox
                                     id={`${option.id}`}
-                                    onBlur={(e) =>
+                                    onClick={(e) =>
                                       handleChange(
                                         entry.id,
                                         option.label,

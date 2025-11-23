@@ -470,13 +470,14 @@ export default function Staffdashboard() {
                               </button>
                               <Separator />
                               <div className="w-full h-10 px-4 rounded-sm flex justify-center items-center bg-havelock-blue-600 text-white">
-                                <p
+                                <button
                                   onClick={() => {
                                     generateLink(entry.shareId!);
                                   }}
+                                  className="cursor-pointer"
                                 >
                                   generate link
-                                </p>
+                                </button>
                               </div>
                             </div>
                           </PopoverContent>

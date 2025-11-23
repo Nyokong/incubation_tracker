@@ -33,6 +33,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import Wloader from "@/components/loaders/w-loader";
 
 export default function Staffdashboard() {
   const { data: session, status } = useSession();
@@ -44,6 +45,7 @@ export default function Staffdashboard() {
   const [isGeneratingLink, setGenerateLink] = useState(false);
   const [isLink, setIsLink] = useState<string>();
   const [progress, setProgress] = React.useState(0);
+  const [isLinkLoading, setIsLinkLoading] = useState(false);
 
   const pageSize = 4;
   const [draftcurrentPage, setDraftCurrentPage] = useState(1);
@@ -164,21 +166,29 @@ export default function Staffdashboard() {
 
   const generateLink = async (shareid: string) => {
     // setGenerateLink(true);
+    setGlobalNotification(true);
+    setIsLinkLoading(true);
 
-    if (isLink == undefined) {
-      setIsLink(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/forms/${shareid}`);
+    setIsLink(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/forms/${shareid}`);
 
-      setGlobalNotification(true);
+    if (isLink != undefined) {
+      // console.log(isLink);
       try {
-        await navigator.clipboard.writeText(isLink!);
+        await navigator.clipboard.writeText(isLink);
 
-        setGlobalsuccessMessage("Link generated");
-
-        // setTimeout(() => setCopied(false), 2000); // reset after 2s
+        setTimeout(() => {
+          setGlobalsuccessMessage("Link generated");
+          setIsLinkLoading(false);
+        }, 2000); // reset after 2s
       } catch (err) {
         setGlobalErrorMessage("failed to generate link");
+        setIsLinkLoading(false);
       }
+    } else {
+      setGlobalErrorMessage("failed to generate link");
+      setIsLinkLoading(false);
     }
+    // http://localhost:3000/forms/61707979-1b22-4441-b3b7-a457bfa2acdf
     // once done with something here
     // if (progress == 10) {
     //   setGenerateLink(false);
@@ -476,7 +486,13 @@ export default function Staffdashboard() {
                                   }}
                                   className="cursor-pointer"
                                 >
-                                  generate link
+                                  {isLinkLoading ? (
+                                    <div>
+                                      <Wloader /> <p>generating...</p>
+                                    </div>
+                                  ) : (
+                                    "Generate link"
+                                  )}
                                 </button>
                               </div>
                             </div>

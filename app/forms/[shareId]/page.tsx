@@ -447,12 +447,12 @@ export default function FormPage({
           (session?.user.role == "admin" && (
             <div className="w-full flex justify-center bg-white dark:bg-woodsmoke-800 p-2">
               <TabsList className="flex flex-row gap-2">
-                <TabsTrigger value="questions" className="w-40">
+                <TabsTrigger value="questions" className="cursor-pointer w-40">
                   Questions
                 </TabsTrigger>
                 <TabsTrigger
                   value="responses"
-                  className="relative w-40"
+                  className=" relative cursor-pointer w-40"
                   onClick={() => {
                     // get responses
                     getResponsesFunction();

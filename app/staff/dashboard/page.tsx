@@ -171,6 +171,11 @@ export default function Staffdashboard() {
 
     setIsLink(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/forms/${shareid}`);
 
+    // run again
+    if (isLink == undefined) {
+      generateLink(shareid);
+    }
+
     if (isLink != undefined) {
       // console.log(isLink);
       try {
@@ -184,9 +189,6 @@ export default function Staffdashboard() {
         setGlobalErrorMessage("failed to generate link");
         setIsLinkLoading(false);
       }
-    } else {
-      setGlobalErrorMessage("failed to generate link");
-      setIsLinkLoading(false);
     }
     // http://localhost:3000/forms/61707979-1b22-4441-b3b7-a457bfa2acdf
     // once done with something here
@@ -487,7 +489,7 @@ export default function Staffdashboard() {
                                   className="cursor-pointer"
                                 >
                                   {isLinkLoading ? (
-                                    <div>
+                                    <div className="flex flex-row justify-center gap-2 items-center">
                                       <Wloader /> <p>generating...</p>
                                     </div>
                                   ) : (

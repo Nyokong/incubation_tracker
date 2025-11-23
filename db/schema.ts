@@ -128,7 +128,7 @@ export const questions = pgTable("questions", {
   id: uuid("id").primaryKey().defaultRandom(),
   formId: uuid("formId")
     .notNull()
-    .references(() => forms.id),
+    .references(() => forms.id, { onDelete: "cascade" }),
   type: text("type")
     .$type<"text" | "textarea" | "radio" | "checkbox" | "dropdown">()
     .notNull(),
@@ -141,7 +141,7 @@ export const options = pgTable("options", {
   id: uuid("id").primaryKey().defaultRandom(),
   questionId: uuid("questionId")
     .notNull()
-    .references(() => questions.id),
+    .references(() => questions.id, { onDelete: "cascade" }),
   value: text("value").notNull(),
   label: text("label").notNull(),
 });
@@ -150,7 +150,7 @@ export const responses = pgTable("responses", {
   id: uuid("id").primaryKey().defaultRandom(),
   formId: uuid("formId")
     .notNull()
-    .references(() => forms.id),
+    .references(() => forms.id, { onDelete: "cascade" }),
   submittedAt: timestamp("submittedAt").defaultNow(),
   submittedBy: text("submittedBy"), // optional user reference
 });
@@ -159,10 +159,10 @@ export const answers = pgTable("answers", {
   id: uuid("id").primaryKey().defaultRandom(),
   responseId: uuid("responseId")
     .notNull()
-    .references(() => responses.id),
+    .references(() => responses.id, { onDelete: "cascade" }),
   questionId: uuid("questionId")
     .notNull()
-    .references(() => questions.id),
+    .references(() => questions.id, { onDelete: "cascade" }),
   value: text("value").notNull(), // could be JSON if multi-select
 });
 

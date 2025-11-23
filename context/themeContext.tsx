@@ -22,7 +22,7 @@ const CustomThemeProvider = ({ children }: { children: ReactNode }) => {
       if (cached) {
         setTheme(cached);
       } else {
-        setTheme("light");
+        setTheme("system");
         localStorage.setItem("theme", theme);
       }
     };

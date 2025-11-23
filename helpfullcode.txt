@@ -1,3 +1,7 @@
+ 
+    "seed:text": "tsx scripts/seedAdmin.ts && tsx scripts/seedStaff.ts && tsx scripts/seedForm.ts",
+ 
+ 
   // const handleChange = (
   //   questionId: string,
   //   value: string,

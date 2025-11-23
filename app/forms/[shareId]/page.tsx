@@ -22,11 +22,13 @@ import { createResponse } from "@/data-access/mutations/responses";
 import { getSharedForms } from "@/data-access/queries/getforms";
 import { getResponses } from "@/data-access/queries/getresponses";
 import {
+  Answer,
   AnswersType,
   FormType,
   OptionsType,
   QuestionsAnswerType,
   QuestionsType,
+  ResponseAnswerType,
 } from "@/types/next-auth";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
@@ -43,6 +45,14 @@ type FormWithQuestions = {
   questionsArr: QuestionsType[];
 };
 
+type AnswersWithLabel = {
+  questionId: string;
+  value: string;
+  label: string;
+};
+
+type ResponseWithAnswers = Response & { answers: Answer[] };
+
 export default function FormPage({
   params,
 }: {
@@ -50,6 +60,14 @@ export default function FormPage({
 }) {
   const [form, setForm] = React.useState<FormWithQuestions>();
   const [isAnswer, setAnswers] = useState<AnswersType[]>([]);
+
+  const [isGrouped, setGrouped] =
+    useState<Record<string, ResponseAnswerType[]>>();
+
+  const [groupedAnswers, setGroupedAnswers] = useState<ResponseAnswerType[]>(
+    []
+  );
+
   const shareID = use(params);
   const { data: session, status } = useSession();
 
@@ -62,6 +80,8 @@ export default function FormPage({
 
   const [isEmail, setIsEmail] = useState("");
 
+  const [isResponseLoading, setIsResLoading] = useState<boolean>(false);
+
   // const [isCheckboxSelected, setCheckboxSelected] = useState<
   //   { questionId: string; value: string }[]
   // >([]);
@@ -73,7 +93,6 @@ export default function FormPage({
 
   const pageSize = 10;
   const [currentPage, setCurrentPage] = useState(1);
-  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(pageSize);
   const [totalPages, setTotalPages] = useState(0);
 
@@ -95,17 +114,7 @@ export default function FormPage({
       setIsFormLoading(true);
       const data = await getSharedForms(shareID.shareId);
 
-      const responses = await getResponses(shareID.shareId);
-
       if (data) {
-        if (responses) {
-          setAnswers(
-            responses.data.flatMap((r: { answers: AnswersType[] }) => r.answers)
-          );
-          setResponseCount(responses.count);
-
-          console.log(isAnswer);
-        }
         setForm(data);
         setIsFormChecked(true);
         setIsFormLoading(false);
@@ -174,6 +183,43 @@ export default function FormPage({
 
     return paginatedData;
   };
+
+  async function getResponsesFunction() {
+    // set loader
+    setIsResLoading(true);
+
+    const responses = await getResponses(shareID.shareId);
+
+    if (responses) {
+      // flatten responses.data and extract answers, attaching submittedBy where available
+      // const flattenedAnswers = (
+      //   Object.values(responses.data) as any[]
+      // ).flatMap((r: any) =>
+      //   (r.answers as AnswersType[]).map((a) => ({
+      //     ...a,
+      //     submittedBy: r.submittedBy ?? "Anonymous",
+      //   }))
+      // );
+
+      // setAnswers(flattenedAnswers);
+
+      // ensure responses.data is an array before setting state to satisfy the typed state
+      const grouped = Array.isArray(responses.data)
+        ? (responses.data as ResponseAnswerType[])
+        : [];
+
+      setGroupedAnswers(grouped);
+      setGrouped(responses.grouped);
+
+      console.log(responses.grouped);
+
+      setResponseCount(responses.count);
+
+      // set loader responses false
+      setIsResLoading(false);
+      // console.log(isAnswer);
+    }
+  }
 
   if (status == "loading") {
     return (
@@ -404,7 +450,14 @@ export default function FormPage({
                 <TabsTrigger value="questions" className="w-40">
                   Questions
                 </TabsTrigger>
-                <TabsTrigger value="responses" className="relative w-40">
+                <TabsTrigger
+                  value="responses"
+                  className="relative w-40"
+                  onClick={() => {
+                    // get responses
+                    getResponsesFunction();
+                  }}
+                >
                   <div className="absolute -top-4 -right-4 h-8 w-8 bg-havelock-blue-500 text-white rounded-4xl flex justify-center items-center">
                     {isResponseCount}
                   </div>
@@ -436,7 +489,7 @@ export default function FormPage({
                     key={idx}
                     className="min-h-22 bg-[#f4f4f4] dark:bg-woodsmoke-950 rounded-md py-3"
                   >
-                    <div className="min-h-10 flex items-center px-5">
+                    <div className="min-h-10 pt-2 flex items-center px-5">
                       {entry.label}
                     </div>
                     {/* {entry.order} */}
@@ -604,15 +657,17 @@ export default function FormPage({
               </Pagination>
             </div>
 
-            <div className="flex h-auto justify-center items-center gap-4 my-2">
-              <Button
-                type="submit"
-                disabled={isLoggedOff}
-                className="csbtn bg-[#1e4d8a] h-20 w-62 text-white"
-              >
-                Submit Form
-              </Button>
-            </div>
+            {currentPage == totalPages && (
+              <div className="flex h-auto justify-center items-center gap-4 my-2">
+                <Button
+                  type="submit"
+                  disabled={isLoggedOff}
+                  className="csbtn bg-[#1e4d8a] h-20 w-62 text-white"
+                >
+                  Submit Form
+                </Button>
+              </div>
+            )}
           </form>
         </TabsContent>
         <TabsContent
@@ -620,7 +675,7 @@ export default function FormPage({
           className="w-full flex justify-center mt-2"
         >
           <div className="flex h-auto flex-col gap-3 w-[95%] sm:w-[85%] md:w-[70%] lg:w-[60%] 2xl:w-[50%] mb-10">
-            {isAnswer?.map((entry, idx) => (
+            {/* {isAnswer?.map((entry, idx) => (
               <div
                 key={idx}
                 className="h-auto py-2 px-2 flex gap-2 bg-white dark:bg-woodsmoke-900"
@@ -628,7 +683,56 @@ export default function FormPage({
                 {formatResponse(entry.value).type}{" "}
                 {formatResponse(entry.value).value}
               </div>
+            ))} */}
+
+            {groupedAnswers.map((group, idx) => (
+              <div
+                key={idx}
+                className="h-auto p-5 flex flex-col gap-2 bg-havelock-blue-50 dark:bg-woodsmoke-900"
+              >
+                {/* {group.submittedBy} */}
+                {group.answers.map((answer, idx) => (
+                  <div key={idx}>
+                    {answer.label}
+                    <div>
+                      {formatResponse(answer.value).type}
+                      {formatResponse(answer.value).value}
+                    </div>
+                  </div>
+                ))}
+              </div>
             ))}
+
+            {/* {isGrouped &&
+              Object.entries(isGrouped).map(([userKey, responses]) => (
+                <div key={userKey}>
+                  <h2>User: {userKey}</h2>
+                  {responses.map((resp) => (
+                    <div key={resp.id} style={{ marginBottom: "1rem" }}>
+                      <p>
+                        <strong>Response ID:</strong> {resp.id}
+                      </p>
+                      <p>
+                        <strong>Form ID:</strong> {resp.formId}
+                      </p>
+                      <p>
+                        <strong>Submitted At:</strong>{" "}
+                        {resp.submittedAt?.toString() ?? "N/A"}
+                      </p>
+                      <div className="bg-havelock-blue-50 p-5">
+                        {resp.answers.map((a) => (
+                          <li key={a.id}>
+                            <strong>{a.label}</strong> → {a.value}{" "}
+                            <em>
+                              (QID: {a.questionId}, AID: {a.id})
+                            </em>
+                          </li>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))} */}
 
             <button
               className="hidden"
@@ -641,6 +745,8 @@ export default function FormPage({
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* { isGrouped && isGrouped[0].map} */}
 
       <div className="dark:text-white hidden">
         {isResponse?.questions.length! > 0 && (

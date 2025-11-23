@@ -14,10 +14,10 @@ export default function Landingpage() {
   // }
 
   return (
-    <div>
-      <div>Hero Image</div>
+    <div className="mt-10 mb-10 px-2 sm:px-2 md:px-2 lg:px-25">
+      <div className="text-5xl md:text-8xl">Govlead Forms</div>
 
-      <div className="">
+      <div className="my-5">
         <Button className="csbtn">Get Started</Button>
       </div>
     </div>

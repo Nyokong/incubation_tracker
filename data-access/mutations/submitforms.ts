@@ -88,3 +88,26 @@ export async function puplishFormUpdate(id: string) {
 
   return { success: true };
 }
+
+export async function draftFormUpdate(id: string) {
+  const updateForm = await db
+    .update(forms)
+    .set({ status: "draft" })
+    .where(eq(forms.id, id));
+
+  if (!updateForm) return { error: "update was unsuccessfull" };
+
+  return { success: true };
+}
+
+export async function deleteForm(id: string) {
+  await db.delete(forms).where(eq(forms.id, id));
+
+  const deleted = await db.select().from(forms).where(eq(forms.id, id));
+
+  if (deleted.length != 0) {
+    return { error: "deletion was unsuccessfull" };
+  }
+
+  return { success: true };
+}

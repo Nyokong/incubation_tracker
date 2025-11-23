@@ -20,8 +20,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { puplishFormUpdate } from "@/data-access/mutations/submitforms";
+import {
+  deleteForm,
+  draftFormUpdate,
+  puplishFormUpdate,
+} from "@/data-access/mutations/submitforms";
 import { useGlobalNotify } from "@/context/globalnotifcations";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export default function Staffdashboard() {
   const { data: session, status } = useSession();
@@ -31,7 +42,17 @@ export default function Staffdashboard() {
   const [getFormsLoader, setFormsLoader] = useState(false);
 
   const [isGeneratingLink, setGenerateLink] = useState(false);
+  const [isLink, setIsLink] = useState<string>();
   const [progress, setProgress] = React.useState(0);
+
+  const pageSize = 4;
+  const [draftcurrentPage, setDraftCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(pageSize);
+  const [totalDraftPages, setDraftTotalPages] = useState(0);
+
+  const [publishedcurrentPage, setPublishedCurrentPage] = useState(1);
+  // const [rowsPerPage, setRowsPerPage] = useState(pageSize);
+  const [totalPublishedPages, setPublishedTotalPages] = useState(0);
 
   const {
     setGlobalNotification,
@@ -51,6 +72,11 @@ export default function Staffdashboard() {
         setFormsLoader(false);
         setDraftForms(dforms);
         setPublishedForms(pforms);
+
+        setRowsPerPage(pageSize);
+
+        setDraftTotalPages(Math.ceil(dforms.length / rowsPerPage));
+        setPublishedTotalPages(Math.ceil(pforms.length / rowsPerPage));
       }
     }
 
@@ -69,6 +95,24 @@ export default function Staffdashboard() {
       return () => clearTimeout(timer);
     }
   }, [progress]);
+
+  const getDraftSlicedList = (form_data: FormType[]) => {
+    const paginatedData = form_data.slice(
+      (draftcurrentPage - 1) * pageSize,
+      draftcurrentPage * pageSize
+    );
+
+    return paginatedData;
+  };
+
+  const getPublishedSlicedList = (form_data: FormType[]) => {
+    const paginatedData = form_data.slice(
+      (publishedcurrentPage - 1) * pageSize,
+      publishedcurrentPage * pageSize
+    );
+
+    return paginatedData;
+  };
 
   const publishForm = async (id: string) => {
     setFormsLoader(true);
@@ -94,14 +138,64 @@ export default function Staffdashboard() {
     }
   };
 
-  const generateLink = () => {
-    setGenerateLink(true);
+  const makeDraftForm = async (id: string) => {
+    setFormsLoader(true);
+    const updated = await draftFormUpdate(id);
 
-    // once done with something here
-    if (progress == 10) {
-      setGenerateLink(false);
+    setGlobalNotification(true);
+    if (updated.error) {
+      setGlobalErrorMessage(updated.error);
+      setFormsLoader(false);
+    }
+
+    if (updated.success) {
+      setGlobalsuccessMessage("Draft update successful");
+
+      const dforms = await getDraftForms();
+      const pforms = await getPublishedForms();
+
+      if (dforms) {
+        setFormsLoader(false);
+        setDraftForms(dforms);
+        setPublishedForms(pforms);
+      }
     }
   };
+
+  const generateLink = async (shareid: string) => {
+    // setGenerateLink(true);
+
+    if (isLink !== null) {
+      setIsLink(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/forms/${shareid}`);
+
+      setGlobalNotification(true);
+      try {
+        await navigator.clipboard.writeText(isLink!);
+
+        setGlobalsuccessMessage("Link generated");
+
+        // setTimeout(() => setCopied(false), 2000); // reset after 2s
+      } catch (err) {
+        setGlobalErrorMessage("failed to generate link");
+      }
+    }
+    // once done with something here
+    // if (progress == 10) {
+    //   setGenerateLink(false);
+    // }
+  };
+
+  async function deleteById(id: string) {
+    const res = await deleteForm(id);
+
+    setGlobalNotification(true);
+
+    if (res.error) {
+      setGlobalErrorMessage(res.error);
+    } else {
+      setGlobalsuccessMessage("Form was deleted");
+    }
+  }
 
   const dateFormart = (date: Date) => {
     // const day = new Date(date).getDate();
@@ -181,7 +275,7 @@ export default function Staffdashboard() {
             <h1>Draft Forms</h1>
           </div>
           <div className=" py-5 rounded-[5px] mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-5 justify-center justify-items-center items-center px-2 sm:px-2 md:px-2 lg:px-25">
-            {draftforms.map((entry, idx) => {
+            {getDraftSlicedList(draftforms).map((entry, idx) => {
               return (
                 <div
                   key={idx}
@@ -226,7 +320,7 @@ export default function Staffdashboard() {
                           <IconDotsVertical />
                         </PopoverTrigger>
                         <PopoverContent className="w-40">
-                          <div className=" flex flex-col gap-3">
+                          <div className=" flex flex-col gap-4">
                             <p
                               onClick={() => {
                                 publishForm(entry.id);
@@ -234,17 +328,25 @@ export default function Staffdashboard() {
                             >
                               publish
                             </p>
-                            <p>delete</p>
                             <Separator />
+                            <button
+                              className="h-8 w-full bg-red-500 px-3 rounded-md text-white flex justify-start flex-row items-center"
+                              onClick={() => {
+                                deleteById(entry.id);
+                              }}
+                            >
+                              delete
+                            </button>
+                            {/* 
                             <div className="w-full h-10 px-4 rounded-sm flex justify-center items-center bg-havelock-blue-600 text-white">
                               <p
                                 onClick={() => {
-                                  generateLink();
+                                  generateLink(entry.shareId!);
                                 }}
                               >
                                 generate link
                               </p>
-                            </div>
+                            </div> */}
                           </div>
                         </PopoverContent>
                       </Popover>
@@ -258,6 +360,41 @@ export default function Staffdashboard() {
             })}
           </div>
 
+          <div className="flex">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => {
+                      setDraftCurrentPage((p) => Math.max(p - 1, 1));
+                    }}
+                    className="cursor-pointer"
+                  />
+                </PaginationItem>
+
+                <div className="flex flex-row items-center gap-2">
+                  {draftcurrentPage} :
+                  <span className="flex flex-row py-1 px-2 gap-2 bg-havelock-blue-700 text-white rounded-4xl">
+                    {totalDraftPages}
+                  </span>
+                </div>
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => {
+                      setDraftCurrentPage((p) =>
+                        Math.min(p + 1, totalDraftPages)
+                      );
+                    }}
+                    className={`cursor-pointer ${
+                      draftcurrentPage < 2 && "pointer-events-none opacity-30"
+                    }`}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+
           <div className="px-20 sm:px-5 md:px-5 lg:px-20">
             <Separator className="my-5" />
           </div>
@@ -267,7 +404,7 @@ export default function Staffdashboard() {
               <h1>Published Forms</h1>
             </div>
             <div className="py-5 rounded-[5px] mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-5 justify-center justify-items-center items-center px-2 sm:px-2 md:px-2 lg:px-25">
-              {publishedforms.map((entry, idx) => {
+              {getPublishedSlicedList(publishedforms).map((entry, idx) => {
                 return (
                   <div
                     key={idx}
@@ -312,20 +449,28 @@ export default function Staffdashboard() {
                             <IconDotsVertical />
                           </PopoverTrigger>
                           <PopoverContent className="w-40">
-                            <div className=" flex flex-col gap-3">
+                            <div className=" flex flex-col gap-4">
                               <p
                                 onClick={() => {
-                                  publishForm(entry.id);
+                                  makeDraftForm(entry.id);
                                 }}
                               >
-                                publish
+                                Draft?
                               </p>
-                              <p>delete</p>
+                              <Separator />
+                              <button
+                                className="h-8 w-full bg-red-500 px-3 rounded-md text-white flex justify-start flex-row items-center"
+                                onClick={() => {
+                                  deleteById(entry.id);
+                                }}
+                              >
+                                delete
+                              </button>
                               <Separator />
                               <div className="w-full h-10 px-4 rounded-sm flex justify-center items-center bg-havelock-blue-600 text-white">
                                 <p
                                   onClick={() => {
-                                    generateLink();
+                                    generateLink(entry.shareId!);
                                   }}
                                 >
                                   generate link
@@ -342,6 +487,41 @@ export default function Staffdashboard() {
                   </div>
                 );
               })}
+            </div>
+
+            <div className="flex">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => {
+                        setPublishedCurrentPage((p) => Math.max(p - 1, 1));
+                      }}
+                      className="cursor-pointer"
+                    />
+                  </PaginationItem>
+
+                  <div className="flex flex-row items-center gap-2">
+                    {draftcurrentPage} :
+                    <span className="flex flex-row py-1 px-2 gap-2 bg-havelock-blue-700 text-white rounded-4xl">
+                      {totalPublishedPages}
+                    </span>
+                  </div>
+
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() => {
+                        setPublishedCurrentPage((p) =>
+                          Math.min(p + 1, totalPublishedPages)
+                        );
+                      }}
+                      className={`cursor-pointer ${
+                        draftcurrentPage < 2 && "pointer-events-none opacity-30"
+                      }`}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           </div>
         </div>

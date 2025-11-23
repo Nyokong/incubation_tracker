@@ -44,8 +44,11 @@ export default function Publishedforms() {
   return (
     <div>
       <div className="flex flex-col gap-5">
-        <div className="text-5xl px-20 sm:px-5 md:px-5 lg:px-25 text-woodsmoke-800 dark:text-white">
+        <div className="text-5xl px-2 sm:px-5 md:px-5 lg:px-25 text-woodsmoke-800 dark:text-white">
           <h1>Available Forms</h1>
+          <p className="text-xl">
+            Please feel free to engage with the latest form
+          </p>
         </div>
         <div className="py-5 rounded-[5px] mt-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-5 justify-center justify-items-center items-center px-2 sm:px-2 md:px-2 lg:px-25">
           {publishedforms.map((entry, idx) => {

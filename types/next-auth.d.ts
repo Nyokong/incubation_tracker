@@ -116,3 +116,30 @@ type AnswersType = {
   questionId: string;
   value: string;
 };
+
+type Answer = {
+  id: string;
+  questionId: string;
+  value: string;
+  label: string;
+};
+
+type ResponseAnswerType = {
+  id: string;
+  formId: string;
+  submittedAt: Date | null;
+  submittedBy: string | null;
+  answers: Answer[];
+};
+
+// answers: {
+//         id: string;
+//         questionId: string;
+//         value: string;
+//         label: string;
+//     }[];
+//     id: string;
+//     formId: string;
+//     submittedAt: Date | null;
+//     submittedBy: string | null;
+// }[]

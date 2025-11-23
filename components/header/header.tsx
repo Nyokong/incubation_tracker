@@ -22,6 +22,7 @@ import { useGlobalNotify } from "@/context/globalnotifcations";
 
 import { motion } from "motion/react";
 import Whiteloader from "../loaders/whiteloader";
+import { usePathname } from "next/navigation";
 // import { usePathname } from "next/navigation";
 
 export default function Header() {
@@ -31,6 +32,7 @@ export default function Header() {
   const [isLoginLoader, setLoginLoader] = useState(false);
   const [isLogOffLoader, setLogOffLoader] = useState(false);
 
+  const pathname = usePathname();
   const sidemenuRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -44,7 +46,15 @@ export default function Header() {
 
   const [mounted, setMounted] = useState(false);
   // const pathname = usePathname();
-  React.useEffect(() => setMounted(true), []);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    // console.log("Navigation happened, new path:", pathname);
+    setLogOffLoader(false);
+    setLoginLoader(false);
+  }, [pathname]);
 
   React.useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -75,17 +85,19 @@ export default function Header() {
   return (
     <div className=" flex flex-row justify-between items-center h-18 md:h-22 lg:h-26 bg-white dark:bg-woodsmoke-800 px-6 shadow-sm">
       {/* {theme == "dark" ? ( */}
-      <Image
-        suppressHydrationWarning
-        src={
-          theme === "dark"
-            ? "/logos/parent_logoWTrans.png"
-            : "/logos/parent_logo.png"
-        }
-        width={150}
-        height={70}
-        alt="header-logo-blue"
-      />
+      <Link href={"/"}>
+        <Image
+          suppressHydrationWarning
+          src={
+            theme === "dark"
+              ? "/logos/parent_logoWTrans.png"
+              : "/logos/parent_logo.png"
+          }
+          width={150}
+          height={70}
+          alt="header-logo-blue"
+        />
+      </Link>
 
       {globalNotification && (
         <motion.div
@@ -151,7 +163,7 @@ export default function Header() {
       <div className="flex flex-row justify-center items-center gap-3">
         {!session?.user ? (
           <div className="flex flex-row justify-center items-center gap-3">
-            <div className="md:flex flex-row text-white items-center gap-2 hidden">
+            <div className="md:flex flex-row text-black dark:text-white items-center gap-2 hidden">
               <Googlesignin />
               <div className="h-6 w-[0.5px] bg-woodsmoke-700 hover:underline hover:underline-offset-2"></div>
               <Link

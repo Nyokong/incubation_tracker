@@ -314,7 +314,7 @@ export default function Createformpage() {
                 placeholder="Form title"
                 value={form.title}
                 onChange={(e) => {
-                  console.log([titleRow, e.target.value.length]);
+                  // console.log([titleRow, e.target.value.length]);
 
                   if (e.target.value.length > 14) {
                     setTitleHeight(20); // triggers re-render
@@ -563,7 +563,21 @@ export default function Createformpage() {
                                 value={item.value}
                                 className="pointer-events-none bg-havelock-blue-200 shadow-sm shadow-woodsmoke-400 inset-shadow-sm inset-shadow-woodsmoke-100 h-5 w-5 flex justify-center "
                               />
-                              <Label>{item.label}</Label>
+                              <div className="flex justify-between flex-row items-center w-full">
+                                <Label>{item.label}</Label>
+                                <button
+                                  className="cursor-pointer flex flex-row justify-center gap-2 items-center"
+                                  onClick={() => {
+                                    dispatch({
+                                      type: "REMOVE_OPTION",
+                                      qid: q.id,
+                                      oid: item.id,
+                                    });
+                                  }}
+                                >
+                                  delete <Trash2 />
+                                </button>
+                              </div>
                             </div>
                           ))}
                       </RadioGroup>

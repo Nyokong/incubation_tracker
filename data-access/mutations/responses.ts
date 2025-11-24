@@ -16,20 +16,23 @@ export async function createResponse(res: ReponseType) {
 
   // console.log(res.submittedBy);
 
-  await db.insert(responses).values({
-    formId: res.formId,
-    submittedBy: res.submittedBy,
-  });
+  const inserted = await db
+    .insert(responses)
+    .values({
+      formId: res.formId,
+      submittedBy: res.submittedBy,
+    })
+    .returning({ id: responses.id });
 
-  const response = await db
-    .select({ id: responses.id })
-    .from(responses)
-    .where(eq(responses.formId, res.formId));
+  // const response = await db
+  //   .select({ id: responses.id })
+  //   .from(responses)
+  //   .where(eq(responses.formId, res.formId));
 
-  if (response) {
+  if (inserted) {
     res.questions.forEach(async (entry) => {
       await db.insert(answers).values({
-        responseId: response[0].id,
+        responseId: inserted[0].id,
         questionId: entry.questionId,
         value: JSON.stringify({ value: entry.value, type: entry.type }),
       });

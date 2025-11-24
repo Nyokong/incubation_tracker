@@ -16,7 +16,7 @@ type DBResponse = {
 type ResponseWithAnswers = DBResponse & { answers: Answer[] };
 
 export async function getResponses(shareid: string) {
-  // get form
+  // get form gets the form id by share string
   const getform = await db
     .select({ id: forms.id })
     .from(forms)
@@ -34,7 +34,27 @@ export async function getResponses(shareid: string) {
 
   const responseIds = responsesForForm.map((r) => r.id);
 
+  // console.log(responseIds);
+
   // 2) Fetch all answers for those responses in one query (with question labels)
+  // const answersAll = await db
+  //   .select({
+  //     id: answers.id,
+  //     questionId: answers.questionId,
+  //     value: answers.value,
+  //     label: questions.label,
+  //     responseId: answers.responseId,
+  //   })
+  //   .from(answers)
+  //   .innerJoin(questions, eq(answers.questionId, questions.id))
+  //   .where(inArray(answers.responseId, responseIds));
+
+  // 1. Fetch all answers for all responses
+
+  // responsesForForm.map((r) => {
+
+  // })
+
   const answersAll = await db
     .select({
       id: answers.id,
@@ -47,12 +67,23 @@ export async function getResponses(shareid: string) {
     .innerJoin(questions, eq(answers.questionId, questions.id))
     .where(inArray(answers.responseId, responseIds));
 
-  // 3) Index answers by responseId (each response gets its own array)
+  // console.log(answersAll);
+
+  // 2. Group answers by responseId
   const answersByResponseId = answersAll.reduce((acc, a) => {
     if (!acc[a.responseId]) acc[a.responseId] = [];
     acc[a.responseId].push(a);
     return acc;
-  }, {} as Record<string, Answer[]>);
+  }, {} as Record<string, typeof answersAll>);
+
+  console.log(answersByResponseId);
+
+  // // 3) Index answers by responseId (each response gets its own array)
+  // const answersByResponseId = answersAll.reduce((acc, a) => {
+  //   if (!acc[a.responseId]) acc[a.responseId] = [];
+  //   acc[a.responseId].push(a);
+  //   return acc;
+  // }, {} as Record<string, Answer[]>);
 
   // 4) Attach answers to their response (ensure new arrays, no shared refs)
   const responsesWithAnswers: ResponseWithAnswers[] = responsesForForm.map(

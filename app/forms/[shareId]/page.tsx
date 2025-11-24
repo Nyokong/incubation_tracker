@@ -211,7 +211,7 @@ export default function FormPage({
       setGroupedAnswers(grouped);
       setGrouped(responses.grouped);
 
-      console.log(responses.grouped);
+      // console.log(responses.grouped);
 
       setResponseCount(responses.count);
 
@@ -328,7 +328,7 @@ export default function FormPage({
       return { ...updated, questions };
     });
 
-    console.log(isResponse);
+    // console.log(isResponse);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -361,7 +361,7 @@ export default function FormPage({
     if (status == "unauthenticated") {
       setIsLoggedOff(true);
     } else {
-      console.log(isResponse);
+      // console.log(isResponse);
       const response = await createResponse({
         formId: form.form.id,
         submittedBy: session?.user.id,
@@ -684,24 +684,41 @@ export default function FormPage({
                 {formatResponse(entry.value).value}
               </div>
             ))} */}
-
-            {groupedAnswers.map((group, idx) => (
-              <div
-                key={idx}
-                className="h-auto p-5 flex flex-col gap-2 bg-havelock-blue-50 dark:bg-woodsmoke-900"
-              >
-                {/* {group.submittedBy} */}
-                {group.answers.map((answer, idx) => (
-                  <div key={idx}>
-                    {answer.label}
-                    <div>
-                      {formatResponse(answer.value).type}
-                      {formatResponse(answer.value).value}
-                    </div>
-                  </div>
-                ))}
+            <div className="border-t-8 border-t-[#1d4d8d] rounded-t-md rounded-b-sm bg-[#f4f4f4] dark:bg-woodsmoke-950 h-auto px-3 py-10 flex flex-col gap-4">
+              <div className="text-5xl font-medium px-5 ">
+                {isResponseCount} Response
               </div>
-            ))}
+              <div className="flex h-5 items-center mb-3.5"></div>
+            </div>
+
+            <div className="p-2 bg-havelock-blue-50 dark:bg-woodsmoke-950">
+              {groupedAnswers.map((group, idx) => (
+                <div
+                  key={idx}
+                  className="h-auto p-5 flex flex-col gap-2 mt-2 bg-havelock-blue-50 dark:bg-woodsmoke-900 rounded-md"
+                >
+                  <div className="opacity-30">{group.submittedBy}</div>
+                  <div className="my-2">
+                    {group.answers.map((answer, idx) => (
+                      <div key={idx}>
+                        {answer.label}
+                        <div className="flex gap-2 flex-row items-center">
+                          <input
+                            type={`${formatResponse(answer.value).type}`}
+                            className={`${
+                              formatResponse(answer.value).type == "text" &&
+                              "h-2 w-2"
+                            }`}
+                          />
+
+                          {formatResponse(answer.value).value}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
 
             {/* {isGrouped &&
               Object.entries(isGrouped).map(([userKey, responses]) => (
